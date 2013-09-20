@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="#333333">
+
+    <TextView
+        android:id="@+id/upcomingTasksTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp"
+        android:textColor="#D5D5D5"        
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/upcoming_tasks" />
+
+    <ListView
+        android:id="@+id/upcomingTasksListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/addTaskButton"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/upcomingTasksTextView"
+        android:textColor="#D5D5D5" 
+        android:paddingTop="5dp" 
+        android:drawSelectorOnTop="true">
+    </ListView>
+    
+     <View
+        android:id="@+id/horizonLineView"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_below="@+id/upcomingTasksListView"
+        android:background="#33B5E5"/>
+
+    <Button
+        android:id="@+id/statsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@+id/vertLineView"
+        android:paddingTop="5dp"
+        android:paddingBottom="8dp"
+        android:gravity="center"
+        android:onClick="clickListener"
+        android:text="@string/stats"
+        android:textSize="18sp" 
+        android:textColor="#D5D5D5" 
+        style="?android:attr/borderlessButtonStyle"/>
+    
+    <View
+        android:id="@+id/vertLineView"
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/addTaskButton"
+        android:background="#33B5E5"
+        android:layout_centerHorizontal="true" />
+    
+    <Button
+        android:id="@+id/addTaskButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/vertLineView"
+        android:gravity="center"
+        android:onClick="clickListener"
+        android:paddingTop="5dp"
+        android:paddingBottom="8dp"
+        android:text="@string/add_task"
+        android:textSize="18sp" 
+        android:textColor="#D5D5D5" 
+        style="?android:attr/borderlessButtonStyle"/>
+</RelativeLayout>
