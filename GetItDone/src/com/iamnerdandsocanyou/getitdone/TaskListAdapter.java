@@ -3,6 +3,7 @@ package com.iamnerdandsocanyou.getitdone;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +25,15 @@ public class TaskListAdapter extends ArrayAdapter<Task> {
 		
 		if (v == null) {
 			LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = inflater.inflate(R.layout.task_textviews, null);
+			v = inflater.inflate(R.layout.tasklist_textview, null);
 		}
+		
+		Typeface customFontLight = Typeface.createFromAsset(v.getContext().getAssets(), v.getContext().getString(R.string.custom_font_light));
 		
 		Task currentTask = taskList.get(position);
 		
-		TextView taskText = (TextView) v.findViewById(R.id.taskText);
+		TextView taskText = (TextView) v.findViewById(R.id.taskListTextView);
+		taskText.setTypeface(customFontLight);
 		taskText.setText(currentTask.taskText);
 		
 		return v;

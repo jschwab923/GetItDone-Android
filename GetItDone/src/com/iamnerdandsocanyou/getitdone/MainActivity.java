@@ -20,17 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
-// ****KEEP IN MIND LIST***//
-//- Keep working on Life-cycle stuff, releasing resources, saving info etc -
-
-//****TO DO LIST****//
-// - Finish working on custom ArrayAdapter - 
-// - Work on some UI fixes and start figuring out how to design the "Task done" process -
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -266,6 +258,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		
 		private Typeface customFontLight;
 		private Typeface customFontRegular;
+		private Typeface customFontSemiBold;
 		
 		public NowFragment() {
 		}
@@ -278,9 +271,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			
 	    	customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
 	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
+	    	customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
 			
 			TextView titleTextView = (TextView)rootView.findViewById(R.id.currentTaskTitleTextView);
-			titleTextView.setTypeface(customFontRegular);
+			titleTextView.setTypeface(customFontSemiBold);
 			
 			currentTaskTextView = (TextView)rootView.findViewById(R.id.currentTaskTextView);
 			currentTaskTextView.setTypeface(customFontLight);
@@ -333,10 +327,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		private View rootView;
 		private ListView upcomingTasks;
 		private ArrayList<Task> tasks;
-		private ArrayAdapter<Task> tasksAdapter;
+		private TaskListAdapter tasksAdapter;
 		
 		private Typeface customFontLight;
 		private Typeface customFontRegular;
+		private Typeface customFontSemiBold;
 		
 		public UpcomingFragment() {
 		}
@@ -355,9 +350,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			super.onActivityCreated(savedInstanceState);
 			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
 	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
+	    	customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
 	    	
 	    	TextView titleTextView = (TextView)rootView.findViewById(R.id.upcomingTasksTextView);
-	    	titleTextView.setTypeface(customFontRegular);
+	    	titleTextView.setTypeface(customFontSemiBold);
 	    }
 		
 		@Override
@@ -383,7 +379,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			
 			tasks = taskManager.getAllTasks(rootView.getContext());
 				
-			tasksAdapter = new ArrayAdapter<Task>(rootView.getContext(), R.layout.task_textview, tasks);
+			tasksAdapter = new TaskListAdapter(rootView.getContext(), R.layout.tasklist_textview, tasks);
 					
 			upcomingTasks = (ListView)rootView.findViewById(R.id.upcomingTasksListView);
 			upcomingTasks.setAdapter(tasksAdapter);
@@ -410,6 +406,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	 * A fragment representing the 'Later' tab.
 	 */
 	public static class ProductivityFragment extends Fragment {
+		
+		private View rootView;
+		
+		private Typeface customFontLight;
+		private Typeface customFontRegular;
+		private Typeface customFontSemiBold;
 	
 		public ProductivityFragment() {
 		}
@@ -417,14 +419,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {			
-			View rootView = inflater.inflate(R.layout.info,
+			rootView = inflater.inflate(R.layout.info,
 					container, false);
 			return rootView;
 		}
 		
 		@Override
-		public void onStop() {
-			super.onStop();
+		public void onActivityCreated(Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			
+			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
+	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
+	    	customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
+	    	
+	    	TextView titleTextView = (TextView)rootView.findViewById(R.id.infoTitleTextView); 
+	    	titleTextView.setTypeface(customFontSemiBold);
 		}
 	}
 }
