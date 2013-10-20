@@ -232,6 +232,8 @@ public class AddTaskActivity extends Activity {
 	
 	public void submitTask(View v) {
 		
+		Bundle taskInfo = getIntent().getExtras();
+		
 		// Check to make sure all options have been selected.
 		if (taskEditText.getText().length() == 0 || dateTextView.getText().length() == 0 || 
 				reminderSpinner.getSelectedItemPosition() == 0 || proofSpinner.getSelectedItemPosition() == 0 || pointSpinner.getSelectedItemPosition() == 0) {
@@ -245,8 +247,8 @@ public class AddTaskActivity extends Activity {
 			SimpleDateFormat timeDateFormatter = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.getDefault());
 			Calendar timeDate = Calendar.getInstance();
 			
-			// Check to make sure the date can be properly formatted from the dateTextView
-			if (getIntent().getExtras().getString("code").equals("addingTask")) {
+			// Check to make sure the date can be properly formatted from the dateTextView if new task is being added
+			if (taskInfo.getString("code").equals("addingTask")) {
 				try {
 					timeDate.setTime(timeDateFormatter.parse(dateTextView.getText().toString()));
 				} catch (ParseException e) {
@@ -254,9 +256,10 @@ public class AddTaskActivity extends Activity {
 							Toast.LENGTH_LONG);
 					dateErrorToast.show();
 				}
+			// Otherwise just use the already set date from the task being updated.
 			} else {
 				try {
-					timeDate.setTime(timeDateFormatter.parse(getIntent().getExtras().getString("date")));
+					timeDate.setTime(timeDateFormatter.parse(taskInfo.getString("date")));
 				} catch (ParseException e) {
 					
 				}
@@ -270,9 +273,14 @@ public class AddTaskActivity extends Activity {
 			int points = Integer.parseInt(splitPointText[0]);
 		 
 			// Creates taskId based on the scheduled time. Later tasks will always be a larger number.
-			String dateAsNum = "" + timeDate.get(Calendar.YEAR) + "" + timeDate.get(Calendar.MONTH) + "" + timeDate.get(Calendar.DATE)
+			long taskId;
+			if (taskInfo.getString("code").equals("addingTask")) {
+				String dateAsNum = "" + timeDate.get(Calendar.YEAR) + "" + timeDate.get(Calendar.MONTH) + "" + timeDate.get(Calendar.DATE)
 								+ "" + timeDate.get(Calendar.HOUR) + "" + timeDate.get(Calendar.MINUTE);
-			long taskId  = Long.parseLong(dateAsNum);
+				taskId  = Long.parseLong(dateAsNum);
+			} else {
+				taskId = taskInfo.getLong("taskId");
+			}
 						
 			Task newTask = new Task(taskText, timeDate, reminder, proof, points, taskId);
 			

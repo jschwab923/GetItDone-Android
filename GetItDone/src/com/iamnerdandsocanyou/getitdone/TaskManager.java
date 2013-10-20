@@ -43,7 +43,8 @@ final public class TaskManager {
 			// Save as currentTask to be returned when getCurrentTask is called
 			currentTask = defaultAddTask;
 			// Save defaultTask id as the SOONEST_TASK id in SharedPreferences and update NEW_TASKS count.
-			prefs.edit().putLong(PrefsStrings.SOONEST_TASK, 1).commit();
+			prefs.edit().putLong(PrefsStrings.SOONEST_TASK, 1)
+						.commit();
 			
 			allTasks = (ArrayList<Task>)dbManager.getAllTasks();
 		} else {

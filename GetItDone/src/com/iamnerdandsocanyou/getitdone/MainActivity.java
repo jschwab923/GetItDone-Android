@@ -1,6 +1,7 @@
 package com.iamnerdandsocanyou.getitdone;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 
 import android.app.ActionBar;
@@ -381,6 +382,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 			
 			tasks = taskManager.getAllTasks(rootView.getContext());
+			Collections.sort(tasks);
 				
 			tasksAdapter = new TaskListAdapter(rootView.getContext(), R.layout.tasklist_textview, tasks);
 					
@@ -409,6 +411,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 						taskInfo.putString("reminder", selectedTask.reminder);
 						taskInfo.putString("proof", selectedTask.proof);
 						taskInfo.putInt("points", selectedTask.points);
+						taskInfo.putLong("taskId", selectedTask.id);
 						taskInfo.putString("date", selectedTask.dateTime.getTime().toString());
 						
 						addTaskIntent.putExtras(taskInfo);

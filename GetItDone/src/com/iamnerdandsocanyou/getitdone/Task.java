@@ -2,7 +2,7 @@ package com.iamnerdandsocanyou.getitdone;
 
 import java.util.Calendar;
 
-public class Task {
+public class Task implements Comparable<Task>{
 	
 	String taskText;
 	Calendar dateTime;
@@ -24,4 +24,11 @@ public class Task {
 	public String toString() {
 		return taskText;
 	}
+
+	@Override
+	public int compareTo(Task another) {
+		return this.dateTime.compareTo(another.dateTime);
+	}
+
+
 }
