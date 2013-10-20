@@ -6,7 +6,7 @@
     </item>
     
 	<item
-	    android:drawable="@drawable/spinner_background">
+	    android:drawable="@drawable/border">
 	    
 	</item>
 </selector>

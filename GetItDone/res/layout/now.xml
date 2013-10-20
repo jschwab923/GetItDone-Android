@@ -24,21 +24,12 @@
         android:layout_alignLeft="@+id/currentTaskTitleTextView"
         android:layout_below="@+id/currentTaskTitleTextView"
         android:layout_marginLeft="13dp"
-        android:layout_toLeftOf="@+id/vertLineView"
+        android:layout_toLeftOf="@+id/doneButton"
         android:text="@string/add_task"
-        android:textColor="#D5D5D5"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#D5D5D5"
         android:textSize="18sp" />
     
-	<View
-	    android:id="@+id/vertLineView"
-	    android:layout_width="1dp"
-	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/tipTextView"
-	    android:layout_below="@+id/currentTaskTitleTextView"
-	    android:layout_toLeftOf="@+id/doneButton"
-	    android:background="#33B5E5" />
-	
 	<Button
         android:id="@+id/doneButton"
         android:layout_width="wrap_content"
@@ -48,7 +39,8 @@
         android:layout_below="@+id/currentTaskTitleTextView"
         android:text="@string/done"
         android:textColor="#D5D5D5" 
-        style="?android:attr/borderlessButtonStyle"/>
+        style="?android:attr/borderlessButtonStyle"
+        android:background="@drawable/button_border_selector"/>
     
     <TextView
         android:id="@+id/tipTextView"
