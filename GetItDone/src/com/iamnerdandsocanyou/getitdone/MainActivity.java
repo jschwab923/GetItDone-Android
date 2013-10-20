@@ -384,9 +384,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			upcomingTasks = (ListView)rootView.findViewById(R.id.upcomingTasksListView);
 			upcomingTasks.setAdapter(tasksAdapter);
 			
-//			TextView taskListTextView = (TextView)rootView.findViewById(R.layout.task_textview);
-//	    	taskListTextView.setTypeface(customFontLight);
-					
 			tasksAdapter.notifyDataSetChanged();
 				
 			upcomingTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -395,15 +392,32 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 					String clickedTasks = parent.getItemAtPosition(position).toString();
 					if (clickedTasks.equals(getString(R.string.add_task))) {
 						Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
+						Bundle taskInfo = new Bundle();
+						taskInfo.putString("code", "addingTask");
+						addTaskIntent.putExtras(taskInfo);
 						startActivityForResult(addTaskIntent, ADD_TASK_CODE);
-					}			
+					} else {
+						Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
+						Task selectedTask = (Task)upcomingTasks.getItemAtPosition(position);
+		
+						Bundle taskInfo = new Bundle();
+						taskInfo.putString("code", "updatingTask");
+						taskInfo.putString("taskText",selectedTask.taskText);
+						taskInfo.putString("reminder", selectedTask.reminder);
+						taskInfo.putString("proof", selectedTask.proof);
+						taskInfo.putInt("points", selectedTask.points);
+						taskInfo.putString("date", selectedTask.dateTime.getTime().toString());
+						
+						addTaskIntent.putExtras(taskInfo);
+						startActivityForResult(addTaskIntent, ADD_TASK_CODE);
+					}
 				}
 			});
 		}
 	}
 	
 	/**
-	 * A fragment representing the 'Later' tab.
+	 * A fragment representing the 'Info' tab.
 	 */
 	public static class ProductivityFragment extends Fragment {
 		

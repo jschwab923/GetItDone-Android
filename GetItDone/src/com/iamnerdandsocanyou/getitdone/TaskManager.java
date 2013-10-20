@@ -143,6 +143,19 @@ final public class TaskManager {
 		dbManager.taskDone(id);
 	}
 	
+	/**
+	 * Updates on specific task
+	 */
+	public Boolean updateTask(Task taskToUpdate, Context context) {
+		if(dbManager == null) {
+			dbManager = new DatabaseContract(context);
+			new Thread(dbManager).start();
+		}
+		dbManager.updateTask(taskToUpdate);
+		allTasks = (ArrayList<Task>)dbManager.getAllTasks();
+		return true;
+	}
+	
 	/**Returns info about tasks completed and points earned over time.
 	 * The value String represents two integers, tasks completed, and 
 	 * points earned, separated by a space. 

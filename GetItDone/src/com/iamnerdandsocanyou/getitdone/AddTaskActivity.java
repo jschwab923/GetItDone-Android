@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -46,7 +47,7 @@ public class AddTaskActivity extends Activity {
 		setContentView(R.layout.activity_add_task);
 		// Show the Up button in the action bar.
 		setupActionBar();
-		
+			
 		final Typeface customFontLight = Typeface.createFromAsset(getAssets(), getString(R.string.custom_font_light));
     	final Typeface customFontRegular = Typeface.createFromAsset(getAssets(), getString(R.string.custom_font_regular));
     	
@@ -55,7 +56,7 @@ public class AddTaskActivity extends Activity {
     	
     	Button getItDoneButton = (Button)findViewById(R.id.submitTask);
     	getItDoneButton.setTypeface(customFontRegular);
-		
+    		
 		dateTextView = (TextView)findViewById(R.id.dateTextView);
 		dateTextView.setTypeface(customFontLight);
 		
@@ -74,6 +75,61 @@ public class AddTaskActivity extends Activity {
 		
 		CustomSpinnerArrayAdapter pointAdapter = new CustomSpinnerArrayAdapter(this, R.layout.spinner_item, getResources().getStringArray(R.array.point_choices));
 		pointSpinner.setAdapter(pointAdapter);
+
+		Bundle extras = getIntent().getExtras();
+		String code = extras.getString("code");
+		if (!code.equals("addingTask")) {
+			dateTextView.setAlpha(.7f);
+			dateTextView.setText("Can't change date");
+
+			ImageView calendarButton = (ImageView)findViewById(R.id.datePickerImageView);
+			calendarButton.setEnabled(false);
+
+			taskEditText.setText(extras.getString("taskText"));
+
+			String reminder = extras.getString("reminder");
+			String proof = extras.getString("proof");
+			int points = extras.getInt("points");
+
+			if (reminder.equals(getResources().getStringArray(R.array.reminder_choices)[1])) {
+				reminderSpinner.setSelection(1);
+			} else {
+				reminderSpinner.setSelection(2);
+			}
+
+			if (proof.equals(getResources().getStringArray(R.array.proof_choices)[1])) {
+				proofSpinner.setSelection(1);
+			} else if (proof.equals(getResources().getStringArray(R.array.proof_choices)[2])) {
+				proofSpinner.setSelection(2);
+			} else {
+				proofSpinner.setSelection(3);
+			}
+
+			switch(points) {
+			case 5:
+				pointSpinner.setSelection(1);
+				break;
+			case 10:
+				pointSpinner.setSelection(2);
+				break;
+			case 15:
+				pointSpinner.setSelection(3);
+				break;
+			case 20:
+				pointSpinner.setSelection(4);
+				break;
+			case 25:
+				pointSpinner.setSelection(5);
+				break;
+			case 30:
+				pointSpinner.setSelection(6);
+				break;
+			}
+
+			getItDoneButton.setText("Update task info");
+
+		}
+		
 		
 		reminderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -175,6 +231,7 @@ public class AddTaskActivity extends Activity {
 	}
 	
 	public void submitTask(View v) {
+		
 		// Check to make sure all options have been selected.
 		if (taskEditText.getText().length() == 0 || dateTextView.getText().length() == 0 || 
 				reminderSpinner.getSelectedItemPosition() == 0 || proofSpinner.getSelectedItemPosition() == 0 || pointSpinner.getSelectedItemPosition() == 0) {
@@ -189,12 +246,20 @@ public class AddTaskActivity extends Activity {
 			Calendar timeDate = Calendar.getInstance();
 			
 			// Check to make sure the date can be properly formatted from the dateTextView
-			try {
-				timeDate.setTime(timeDateFormatter.parse(dateTextView.getText().toString()));
-			} catch (ParseException e) {
-				Toast dateErrorToast = Toast.makeText(this, "Oops, something's wrong with the date. Did you set a date to get it done?", 
-						Toast.LENGTH_LONG);
-				dateErrorToast.show();
+			if (getIntent().getExtras().getString("code").equals("addingTask")) {
+				try {
+					timeDate.setTime(timeDateFormatter.parse(dateTextView.getText().toString()));
+				} catch (ParseException e) {
+					Toast dateErrorToast = Toast.makeText(this, "Oops, something's wrong with the date. Did you set a date to get it done?", 
+							Toast.LENGTH_LONG);
+					dateErrorToast.show();
+				}
+			} else {
+				try {
+					timeDate.setTime(timeDateFormatter.parse(getIntent().getExtras().getString("date")));
+				} catch (ParseException e) {
+					
+				}
 			}
 
 			String reminder = reminderSpinner.getSelectedItem().toString();
@@ -213,7 +278,12 @@ public class AddTaskActivity extends Activity {
 			
 			// Sends task info to taskManager to be updated in database. 
 			// "addTask" returns true if successfully added, else false.
-			Boolean taskAdded = taskManager.addTask(newTask, getBaseContext());
+			Boolean taskAdded;
+			if (getIntent().getExtras().getString("code").equals("addingTask")) {
+				taskAdded = taskManager.addTask(newTask, getBaseContext());
+			} else {
+				taskAdded = taskManager.updateTask(newTask, getBaseContext());
+			}
 				
 			Intent addTaskResult = new Intent();
 			addTaskResult.putExtra("taskAdded", taskAdded);
