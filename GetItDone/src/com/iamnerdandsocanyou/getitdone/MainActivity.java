@@ -171,6 +171,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		switch(v.getId()) {
 		case(R.id.addTaskButton):
 			Intent addTaskIntent = new Intent(this, AddTaskActivity.class);
+			Bundle taskInfo = new Bundle();
+			taskInfo.putString("code", "addingTask");
+			addTaskIntent.putExtras(taskInfo);
 			startActivity(addTaskIntent);
 			break;
 		case(R.id.statsButton):
