@@ -197,7 +197,7 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
         newValues.put(KEY_TEXT, taskToUpdate.taskText);
         
         // updating row
-        return db.update(TABLE_TASKS, newValues, KEY_ID + " = ?",
+        return db.update(TABLE_TASKS, newValues, KEY_ID + "=?",
                 new String[] { String.valueOf(taskToUpdate.id) });
     }
  
