@@ -67,8 +67,7 @@ final public class TaskManager {
 		if (allTasks == null) {
 			if (dbManager == null) {
 				dbManager = new DatabaseContract(context);
-				new Thread(dbManager).start();
-				
+				new Thread(dbManager).start();	
 			}
 			allTasks = (ArrayList<Task>)dbManager.getAllTasks();
 		}
@@ -145,7 +144,7 @@ final public class TaskManager {
 	}
 	
 	/**
-	 * Updates on specific task
+	 * Updates one specific task
 	 */
 	public Boolean updateTask(Task taskToUpdate, Context context) {
 		if(dbManager == null) {
@@ -154,6 +153,7 @@ final public class TaskManager {
 		}
 		dbManager.updateTask(taskToUpdate);
 		allTasks = (ArrayList<Task>)dbManager.getAllTasks();
+		currentTask = dbManager.getSoonestTask(context.getSharedPreferences(PrefsStrings.PREFS_NAME, 0).getLong(PrefsStrings.SOONEST_TASK, currentTask.id), context);
 		return true;
 	}
 	

@@ -31,16 +31,17 @@
         android:textSize="18sp" />
     
 	<Button
-        android:id="@+id/doneButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/tipTextView"
-        android:layout_alignRight="@+id/tipTextView"
-        android:layout_below="@+id/currentTaskTitleTextView"
-        android:text="@string/done"
-        android:textColor="#D5D5D5" 
-        style="?android:attr/borderlessButtonStyle"
-        android:background="@drawable/button_border_selector"/>
+	    android:id="@+id/doneButton"
+	    style="?android:attr/borderlessButtonStyle"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/tipTextView"
+	    android:layout_alignRight="@+id/tipTextView"
+	    android:layout_alignTop="@+id/currentTaskTitleTextView"
+	    android:background="@drawable/button_border_selector"
+	    android:gravity="center_vertical"
+	    android:text="@string/done"
+	    android:textColor="#D5D5D5" />
     
     <TextView
         android:id="@+id/tipTextView"

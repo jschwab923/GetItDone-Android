@@ -382,7 +382,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			}
 			
 			tasks = taskManager.getAllTasks(rootView.getContext());
-			Collections.sort(tasks);
+			
+			//Collections.sort(tasks); *Causes weird problems with the database. Even when done in the TaskListAdapter*
 				
 			tasksAdapter = new TaskListAdapter(rootView.getContext(), R.layout.tasklist_textview, tasks);
 					

@@ -3,5 +3,8 @@
 
 
 ****TO DO LIST****
-- Finish working on custom ArrayAdapter - 
+- Figure out why sorting the task list messes up the database saving -
+	- needs to be done so tasks can be displayed by order of date
+	
 - Work on some UI fixes and start figuring out how to design the "Task done" process -
+

@@ -62,8 +62,7 @@
         android:text="@string/get_it_done_button"
         android:textColor="#D5D5D5"
         android:textSize="20sp" />
-    
-
+  
     <Spinner
         android:id="@+id/reminderSpinner"
         android:layout_width="wrap_content"
@@ -95,7 +94,7 @@
         android:layout_marginBottom="60dp" 
         android:spinnerMode="dialog"
         android:drawSelectorOnTop="true"/>
-
+    
     <ImageView
         android:id="@+id/datePickerImageView"
         android:layout_width="wrap_content"
@@ -116,16 +115,19 @@
         android:layout_marginBottom="5dp"
         android:textSize="16sp"
         android:textColor="#D5D5D5"
+        android:visibility="gone"
         android:text="" />
 
-    <TextView
-        android:id="@+id/proofDescriptionTextView"
+    <EditText
+        android:id="@+id/proofDescriptionEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/reminderDescriptionTextView"
+        android:layout_alignRight="@+id/proofSpinner"
         android:layout_below="@+id/proofSpinner"
-        android:textSize="25sp"
+        android:textSize="16sp"
         android:textColor="#D5D5D5"
+        android:visibility="gone"
+        android:hint=""
         android:text="" />
  
 </RelativeLayout>

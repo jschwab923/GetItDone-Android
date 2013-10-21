@@ -23,6 +23,7 @@
     <string name="reminder_textview">How to remind you?</string>
     <string name="points_textview">How much is it worth?</string>
     <string name="proof_textview">How will you prove it?</string>
+    <string name="proof_enter_question">What question will you answer?</string>
     <string name="calendar_icon">Calendar Icon</string>
     <string name="submit_time_date_button">Submit</string>
     <string name="add_task_menu_help">Help</string>
