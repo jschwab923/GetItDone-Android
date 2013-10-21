@@ -1,133 +1,146 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".AddTaskActivity" 
-    android:background="#333333">
-
-    <TextView
-        android:id="@+id/addTaskLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="@string/add_task_label"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#D5D5D5" />
-
-    <EditText
-        android:id="@+id/taskEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/addTaskLabel"
-        android:layout_centerHorizontal="true"
-        android:hint="@string/add_task_hint"
-        android:layout_marginTop="17dp"
-        android:textColor="#D5D5D5"
-        android:ems="10" 
-        android:singleLine="true">
-
-        <requestFocus />
-    </EditText>
-
-    <TextView
-        android:id="@+id/dateTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/taskEditText"
-        android:layout_below="@+id/taskEditText"
-        android:layout_toLeftOf="@+id/datePickerImageView"
-        android:background="@drawable/border"
-        android:padding="3sp"
-        android:text="@string/date_pick_text"
-        android:textColor="#D5D5D5"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="18sp" />
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:fillViewport="true">
     
-    <Button
-        android:id="@+id/submitTask"
-        style="?android:attr/borderlessButtonStyle"
-        android:background="@drawable/button_border_selector"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:onClick="submitTask"
-        android:text="@string/get_it_done_button"
-        android:textColor="#D5D5D5"
-        android:textSize="20sp" />
-  
-    <Spinner
-        android:id="@+id/reminderSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/dateTextView"
-        android:layout_alignRight="@+id/pointSpinner"
-        android:layout_below="@+id/dateTextView"
-        android:textColor="#D5D5D5"
-        android:gravity="center" 
-        android:spinnerMode="dialog"
-        android:drawSelectorOnTop="true"/>
+   <LinearLayout 
+        	android:orientation="vertical"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:paddingBottom="@dimen/activity_vertical_margin"
+		    android:paddingTop="@dimen/activity_vertical_margin"
+		    android:paddingLeft="@dimen/activity_horizontal_margin"
+		    android:paddingRight="@dimen/activity_horizontal_margin"
+		    tools:context=".AddTaskActivity" 
+		    android:background="#333333">
 
-    <Spinner
-        android:id="@+id/proofSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/dateTextView"
-        android:textColor="#D5D5D5"
-        android:layout_centerVertical="true" 
-        android:spinnerMode="dialog"
-        android:drawSelectorOnTop="true"/>
-
-    <Spinner
-        android:id="@+id/pointSpinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/submitTask"
-        android:layout_alignLeft="@+id/pointSpinner"
-        android:layout_marginBottom="60dp" 
-        android:spinnerMode="dialog"
-        android:drawSelectorOnTop="true"/>
-    
-    <ImageView
-        android:id="@+id/datePickerImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/taskEditText"
-        android:layout_below="@+id/taskEditText"
-        android:contentDescription="@string/calendar_icon"
-        android:onClick="dateChooserClickListener"
-        android:textColor="#D5D5D5"
-        android:background="@drawable/calendar_button" />
-
-    <TextView
-        android:id="@+id/reminderDescriptionTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/reminderSpinner"
-        android:layout_below="@+id/reminderSpinner"
-        android:layout_marginBottom="5dp"
-        android:textSize="16sp"
-        android:textColor="#D5D5D5"
-        android:visibility="gone"
-        android:text="" />
-
-    <EditText
-        android:id="@+id/proofDescriptionEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/proofSpinner"
-        android:layout_below="@+id/proofSpinner"
-        android:textSize="16sp"
-        android:textColor="#D5D5D5"
-        android:visibility="gone"
-        android:hint=""
-        android:text="" />
+	    <TextView
+	        android:id="@+id/addTaskLabel"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/add_task_label"
+	        android:textAppearance="?android:attr/textAppearanceLarge"
+	        android:textColor="#D5D5D5" />
+	    
+	    <EditText
+		        android:id="@+id/taskEditText"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:hint="@string/add_task_hint"
+		        android:layout_marginTop="17dp"
+		        android:textColor="#D5D5D5"
+		        android:ems="10" 
+		        android:singleLine="true">
+		        <requestFocus />
+		</EditText>
+	
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+			
+	        <TextView
+		        android:id="@+id/dateTextView"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:background="@drawable/border"
+		        android:padding="3sp"
+		        android:text="@string/date_pick_text"
+		        android:textColor="#D5D5D5"
+		        android:textAppearance="?android:attr/textAppearanceMedium"
+		        android:textSize="18sp" 
+		        android:gravity="center_vertical"
+		        android:clickable="true"
+		        android:onClick="dateChooserClickListener"
+		        android:drawableRight="@drawable/calendar_button"/>
+		</LinearLayout>
+	
+	    <Spinner
+	        android:id="@+id/reminderSpinner"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="#D5D5D5"
+	        android:gravity="center" 
+	        android:spinnerMode="dialog"
+	        android:layout_marginBottom="@dimen/activity_vertical_margin"
+		    android:layout_marginTop="@dimen/activity_vertical_margin"
+	        android:drawSelectorOnTop="true"/>
+	    
+	    <TextView 
+	        android:id="@+id/reminderDescriptionTextView"
+	        android:layout_width="0dp"
+	        android:layout_height="0dp"
+	        android:textSize="16sp"
+	        android:textColor="#D5D5D5"
+	        android:text="" >
+		</TextView>
+	
+	    <Spinner
+	        android:id="@+id/proofSpinner"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textColor="#D5D5D5"	     
+	        android:spinnerMode="dialog"
+	        android:gravity="center" 
+	        android:layout_marginBottom="@dimen/activity_vertical_margin"
+		    android:layout_marginTop="@dimen/activity_vertical_margin"
+	        android:drawSelectorOnTop="true"/>
+	    
+	    <EditText
+	        android:id="@+id/proofDescriptionEditText"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:textSize="16sp"
+	        android:textColor="#D5D5D5"
+	        android:visibility="gone"
+	        android:hint=""
+	        android:text="" />
+	
+	    <Spinner
+	        android:id="@+id/pointSpinner"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:spinnerMode="dialog"
+	        android:gravity="center" 
+	        android:layout_marginBottom="@dimen/activity_vertical_margin"
+		    android:layout_marginTop="@dimen/activity_vertical_margin"
+	        android:drawSelectorOnTop="true"/>
+	    
+	    <Spinner
+	        android:id="@+id/recurringSpinner"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:spinnerMode="dialog"
+	        android:gravity="center" 
+	        android:layout_marginBottom="@dimen/activity_vertical_margin"
+		    android:layout_marginTop="@dimen/activity_vertical_margin"
+	        android:drawSelectorOnTop="true"/>
+	    
+	    <Spinner
+	        android:id="@+id/categorySpinner"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:spinnerMode="dialog"
+	        android:gravity="center" 
+	        android:layout_marginBottom="@dimen/activity_vertical_margin"
+		    android:layout_marginTop="@dimen/activity_vertical_margin"
+	        android:drawSelectorOnTop="true"/>
+	    
+	    <Button
+	        android:id="@+id/submitTask"
+	        style="?android:attr/borderlessButtonStyle"
+	        android:background="@drawable/button_border_selector"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:onClick="submitTask"
+	        android:layout_marginBottom="@dimen/activity_vertical_margin"
+		    android:layout_marginTop="@dimen/activity_vertical_margin"
+	        android:text="@string/get_it_done_button"
+	        android:textColor="#D5D5D5"
+	        android:textSize="20sp" />
  
-</RelativeLayout>
+	</LinearLayout>
+</ScrollView>

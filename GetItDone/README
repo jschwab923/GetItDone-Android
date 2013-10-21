@@ -5,6 +5,8 @@
 ****TO DO LIST****
 - Figure out why sorting the task list messes up the database saving -
 	- needs to be done so tasks can be displayed by order of date
+
+- Fix the landscape orientation of the add task activity. The date time chooser cuts off the time -
 	
 - Work on some UI fixes and start figuring out how to design the "Task done" process -
 

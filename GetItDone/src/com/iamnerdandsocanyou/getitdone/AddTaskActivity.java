@@ -19,7 +19,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewStub;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -46,9 +46,7 @@ public class AddTaskActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		/*****TESTING WITH scroltest.xml CHANGE BACK TO edited activity_add_task if works ******/
-		//setContentView(R.layout.activity_add_task);
-		setContentView(R.layout.scrolltest);
+		setContentView(R.layout.activity_add_task);
 		// Show the Up button in the action bar.
 		setupActionBar();
 			
@@ -83,13 +81,11 @@ public class AddTaskActivity extends Activity {
 		Bundle extras = getIntent().getExtras();
 		String code = extras.getString("code");
 		if (!code.equals("addingTask")) {
-			dateTextView.setAlpha(.1f);
+			// Disable datePicker
+			dateTextView.setClickable(false);
+			dateTextView.setAlpha(.4f);
 			dateTextView.setText("Can't change date");
-
-			ImageView calendarButton = (ImageView)findViewById(R.id.datePickerImageView);
-			calendarButton.setEnabled(false);
-			calendarButton.setAlpha(.1f);
-
+			
 			taskEditText.setText(extras.getString("taskText"));
 
 			String reminder = extras.getString("reminder");
@@ -130,9 +126,9 @@ public class AddTaskActivity extends Activity {
 				pointSpinner.setSelection(6);
 				break;
 			}
-
+							
 			getItDoneButton.setText("Update task info");
-
+			
 		}
 		
 		
@@ -143,24 +139,23 @@ public class AddTaskActivity extends Activity {
 				final int gently = 1;
 				final int vigorously = 2;
 				
-				TextView reminderDescriptionTextView = null;
+				
+				// Set up extra Views that aren't visibile until selection is made with
+				// spinners
+				TextView reminderDescriptionTextView = (TextView)findViewById(R.id.reminderDescriptionTextView);
+				reminderDescriptionTextView.setTypeface(customFontLight);
+				
+				LayoutParams reminderTextViewParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+							
 				switch(pos) {
 				case(gently):
-					if (reminderDescriptionTextView == null) {
-						ViewStub reminderTextViewStub = (ViewStub)findViewById(R.id.reminderTextViewStub);
-						reminderDescriptionTextView = (TextView)reminderTextViewStub.inflate();
-						reminderDescriptionTextView.setTypeface(customFontLight);
-						reminderDescriptionTextView.setVisibility(TextView.VISIBLE);
-					}
+					// Change width and height of TextView so text can be shown
+					reminderDescriptionTextView.setLayoutParams(reminderTextViewParams);
 					reminderDescriptionTextView.setText(Html.fromHtml(getString(R.string.reminder_description_gently)));
 					break;
 				case(vigorously):
-					if (reminderDescriptionTextView == null) {
-						ViewStub reminderTextViewStub = (ViewStub)findViewById(R.id.reminderTextViewStub);
-						reminderDescriptionTextView = (TextView)reminderTextViewStub.inflate();
-						reminderDescriptionTextView.setTypeface(customFontLight);
-						reminderDescriptionTextView.setVisibility(TextView.VISIBLE);
-					}
+					// Change width and height of TextView so text can be shown					
+					reminderDescriptionTextView.setLayoutParams(reminderTextViewParams);
 					reminderDescriptionTextView.setText(Html.fromHtml(getString(R.string.reminder_description_vigorously)));
 					break;
 				}
