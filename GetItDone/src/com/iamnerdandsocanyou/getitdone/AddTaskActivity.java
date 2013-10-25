@@ -140,7 +140,7 @@ public class AddTaskActivity extends Activity {
 				final int vigorously = 2;
 				
 				
-				// Set up extra Views that aren't visibile until selection is made with
+				// Set up extra Views that aren't visible until selection is made with
 				// spinners
 				TextView reminderDescriptionTextView = (TextView)findViewById(R.id.reminderDescriptionTextView);
 				reminderDescriptionTextView.setTypeface(customFontLight);
