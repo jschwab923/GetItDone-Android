@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -19,12 +20,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -34,9 +34,13 @@ public class AddTaskActivity extends Activity {
 	
 	private TextView dateTextView;
 	private EditText taskEditText;
+	private EditText proofQuestionEditText;
 	private Spinner reminderSpinner; 
 	private Spinner proofSpinner; 
 	private Spinner pointSpinner;
+	private Spinner recurringSpinner;
+	private Spinner categorySpinner;
+	
 	
 	private static TaskManager taskManager = TaskManager.getInstance();
 	
@@ -65,18 +69,30 @@ public class AddTaskActivity extends Activity {
 		taskEditText = (EditText)findViewById(R.id.taskEditText);
 		taskEditText.setTypeface(customFontLight);
 		
-		reminderSpinner = (Spinner)findViewById(R.id.reminderSpinner);
-		proofSpinner = (Spinner)findViewById(R.id.proofSpinner);
-		pointSpinner = (Spinner)findViewById(R.id.pointSpinner);
+		proofQuestionEditText = (EditText)findViewById(R.id.proofQuestionEditText);
+		proofQuestionEditText.setTypeface(customFontLight);
 		
+		reminderSpinner = (Spinner)findViewById(R.id.reminderSpinner);
 		CustomSpinnerArrayAdapter reminderAdapter = new CustomSpinnerArrayAdapter(this, R.layout.spinner_item, getResources().getStringArray(R.array.reminder_choices));
 		reminderSpinner.setAdapter(reminderAdapter);
 		
+		proofSpinner = (Spinner)findViewById(R.id.proofSpinner);
 		CustomSpinnerArrayAdapter proofAdapter = new CustomSpinnerArrayAdapter(this, R.layout.spinner_item, getResources().getStringArray(R.array.proof_choices));
 		proofSpinner.setAdapter(proofAdapter);
 		
+		pointSpinner = (Spinner)findViewById(R.id.pointSpinner);
 		CustomSpinnerArrayAdapter pointAdapter = new CustomSpinnerArrayAdapter(this, R.layout.spinner_item, getResources().getStringArray(R.array.point_choices));
 		pointSpinner.setAdapter(pointAdapter);
+		
+		// ****NEED TO SOMEHOW CONNECT THIS WITH THE DATE TO GIVE OPTIONS FOR RECURRING ON SELECTED DAY, PROVIDE CUSTOM RECURRING OPTIONS****
+		recurringSpinner = (Spinner)findViewById(R.id.recurringSpinner);
+		CustomSpinnerArrayAdapter recurringAdapter = new CustomSpinnerArrayAdapter(this, R.layout.spinner_item, getResources().getStringArray(R.array.recurring_choices));
+		recurringSpinner.setAdapter(recurringAdapter);
+		
+		// ****NEED TO UPDATE SO CATEGORIES ARE EDITABLE****
+		categorySpinner = (Spinner)findViewById(R.id.categorySpinner);
+		CustomSpinnerArrayAdapter categoryAdapter = new CustomSpinnerArrayAdapter(this, R.layout.spinner_item, getResources().getStringArray(R.array.category_choices));
+		categorySpinner.setAdapter(categoryAdapter);
 
 		Bundle extras = getIntent().getExtras();
 		String code = extras.getString("code");
@@ -91,7 +107,9 @@ public class AddTaskActivity extends Activity {
 			String reminder = extras.getString("reminder");
 			String proof = extras.getString("proof");
 			int points = extras.getInt("points");
-
+			String category = extras.getString("category");
+			String recurring = extras.getString("recurring");
+			
 			if (reminder.equals(getResources().getStringArray(R.array.reminder_choices)[1])) {
 				reminderSpinner.setSelection(1);
 			} else {
@@ -126,6 +144,26 @@ public class AddTaskActivity extends Activity {
 				pointSpinner.setSelection(6);
 				break;
 			}
+			String[] categoryChoices = getResources().getStringArray(R.array.category_choices);
+			if (category.equals(categoryChoices[1])) {
+				categorySpinner.setSelection(1);
+			} else if (category.equals(categoryChoices[2])) {
+				categorySpinner.setSelection(2);
+			} else {
+				categorySpinner.setSelection(3);
+			}
+			
+			String[] recurringChoices = getResources().getStringArray(R.array.recurring_choices);
+			if (recurring.equals(recurringChoices[1])) {
+				recurringSpinner.setSelection(1);
+			} else if (recurring.equals(recurringChoices[2])) {
+				recurringSpinner.setSelection(2);
+			} else if (recurring.equals(recurringChoices[3])) {
+				recurringSpinner.setSelection(3);
+			} else if (recurring.equals(recurringChoices[4])) {
+				recurringSpinner.setSelection(4);
+			} else if (recurring.equals(recurringChoices[5])) {
+				recurringSpinner.setSelection(5);
 							
 			getItDoneButton.setText("Update task info");
 			
@@ -174,21 +212,24 @@ public class AddTaskActivity extends Activity {
 				final int answerQuestion = 3;
 						
 				switch(pos) {
-				case(takeUploadPhoto):
-					break;
-				case(describeTask):
-					break;
-				case(answerQuestion):
-					EditText questionToAnswerEditText = (EditText)findViewById(R.id.proofDescriptionEditText);
-					questionToAnswerEditText.setTypeface(customFontLight);
-					questionToAnswerEditText.setVisibility(EditText.VISIBLE);
-					questionToAnswerEditText.setHint(R.string.proof_enter_question);
+					case(takeUploadPhoto):
+						break;
+					case(describeTask):
+						break;
+					case(answerQuestion):
+						EditText questionToAnswerEditText = (EditText)findViewById(R.id.proofQuestionEditText);
+						questionToAnswerEditText.setTypeface(customFontLight);
+						questionToAnswerEditText.setVisibility(EditText.VISIBLE);
+						questionToAnswerEditText.setHint(R.string.proof_enter_question);
+						break;
+					default:
+						break;
 				}
 			}
 
 			public void onNothingSelected(AdapterView<?> parent) {
 			}
-		});
+		});}
 	}
 
 	/**
@@ -271,41 +312,30 @@ public class AddTaskActivity extends Activity {
 		
 		// Check to make sure all options have been selected.
 		if (taskEditText.getText().length() == 0 || dateTextView.getText().length() == 0 || 
-				reminderSpinner.getSelectedItemPosition() == 0 || proofSpinner.getSelectedItemPosition() == 0 || pointSpinner.getSelectedItemPosition() == 0) {
+				reminderSpinner.getSelectedItemPosition() == 0 || proofSpinner.getSelectedItemPosition() == 0 || pointSpinner.getSelectedItemPosition() == 0 ||
+				categorySpinner.getSelectedItemPosition() == 0 || recurringSpinner.getSelectedItemPosition() == 0) {
 
 			Toast notSelectedToast = Toast.makeText(this, "Looks like something still needs to be selected!", Toast.LENGTH_LONG);
 			notSelectedToast.show();
 		} else {
 			// Gather data entered by user in order to create a new task.
 			String taskText = taskEditText.getText().toString();
-
-			SimpleDateFormat timeDateFormatter = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.getDefault());
-			Calendar timeDate = Calendar.getInstance();
 			
-			// Check to make sure the date can be properly formatted from the dateTextView if new task is being added
-			if (taskInfo.getString("code").equals("addingTask")) {
-				try {
-					timeDate.setTime(timeDateFormatter.parse(dateTextView.getText().toString()));
-				} catch (ParseException e) {
-					Toast dateErrorToast = Toast.makeText(this, "Oops, something's wrong with the date. Did you set a date to get it done?", 
-							Toast.LENGTH_LONG);
-					dateErrorToast.show();
-				}
-			// Otherwise just use the already set date from the task being updated.
-			} else {
-				try {
-					timeDate.setTime(timeDateFormatter.parse(taskInfo.getString("date")));
-				} catch (ParseException e) {
-					
-				}
-			}
-
+			// Check which date to assign and if it is formattable. 
+			Calendar timeDate = checkAndChooseDate(taskInfo);
+			
 			String reminder = reminderSpinner.getSelectedItem().toString();
 			String proof = proofSpinner.getSelectedItem().toString();
 			
 			// Extract just the integer from the pointSpinner selection.
 			String[] splitPointText = pointSpinner.getSelectedItem().toString().split(" ");
 			int points = Integer.parseInt(splitPointText[0]);
+			
+			// Extract category selection
+			String category = categorySpinner.getSelectedItem().toString();
+			
+			// Extract the recurring selection
+			String recurring = recurringSpinner.getSelectedItem().toString();
 		 
 			// Creates taskId based on the scheduled time. Later tasks will always be a larger number.
 			long taskId;
@@ -317,12 +347,12 @@ public class AddTaskActivity extends Activity {
 				taskId = taskInfo.getLong("taskId");
 			}
 						
-			Task newTask = new Task(taskText, timeDate, reminder, proof, points, taskId);
+			Task newTask = new Task(taskText, timeDate, reminder, proof, points, category, recurring, taskId);
 			
 			// Sends task info to taskManager to be updated in database. 
 			// "addTask" returns true if successfully added, else false.
 			Boolean taskAdded;
-			if (getIntent().getExtras().getString("code").equals("addingTask")) {
+			if (taskInfo.getString("code").equals("addingTask")) {
 				taskAdded = taskManager.addTask(newTask, getBaseContext());
 			} else {
 				taskAdded = taskManager.updateTask(newTask, getBaseContext());
@@ -335,7 +365,30 @@ public class AddTaskActivity extends Activity {
 			} else {
 				setResult(Activity.RESULT_CANCELED);
 			}
+			
+			SharedPreferences sharedPrefs = v.getContext().getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
+			if (sharedPrefs.getInt(PrefsStrings.TASKS_ADDED, 0) == 1) {
+				taskManager.saveTaskList(getBaseContext());
+			}
 			finish();
 		}
+		
+	}
+	
+	private Calendar checkAndChooseDate(Bundle taskInfo) {
+		SimpleDateFormat timeDateFormatter = new SimpleDateFormat("MM/dd/yy h:mm a", Locale.getDefault());
+		Calendar timeDate = Calendar.getInstance();
+		
+		// Check to make sure the date can be properly formatted from the dateTextView if new task is being added
+		if (taskInfo.getString("code").equals("addingTask")) {
+			try {
+				timeDate.setTime(timeDateFormatter.parse(dateTextView.getText().toString()));
+			} catch (ParseException e) {
+				Toast dateErrorToast = Toast.makeText(this, "Oops, something's wrong with the date. Did you set a date to get it done?", 
+						Toast.LENGTH_LONG);
+				dateErrorToast.show();
+			}
+		}
+		return timeDate;
 	}
 }

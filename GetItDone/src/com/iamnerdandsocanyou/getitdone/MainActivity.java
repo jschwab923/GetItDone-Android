@@ -1,7 +1,6 @@
 package com.iamnerdandsocanyou.getitdone;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
 
 import android.app.ActionBar;
@@ -49,6 +48,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	 * actions.
 	 */
 	private TaskManager taskManager;
+	
+	private SharedPreferences sharedPrefs;
 			
 	// Constants to represent the three different tabs.
 	// private final int FIRST_PAGE = 0;
@@ -103,9 +104,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		taskManager = TaskManager.getInstance();
 		taskManager.setup(this);
 		
-		SharedPreferences startupInfo = getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
-		if(!startupInfo.contains(PrefsStrings.FIRST_STARTUP_DONE)) {		
-			SharedPreferences.Editor prefsEditor = startupInfo.edit();
+		sharedPrefs = getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
+		if(!sharedPrefs.contains(PrefsStrings.FIRST_STARTUP_DONE)) {		
+			SharedPreferences.Editor prefsEditor = sharedPrefs.edit();
 			prefsEditor.putBoolean(PrefsStrings.FIRST_STARTUP_DONE, true);
 			prefsEditor.commit();
 		}
@@ -152,9 +153,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			FragmentTransaction fragmentTransaction) {
 	}
 	
+	
 	@Override
 	public void onStop() {
-		taskManager.saveTaskList(this);
+		if (sharedPrefs.getInt(PrefsStrings.NEW_TASKS, 0) >= 1) {
+			taskManager.saveTaskList(this);
+		}
 		super.onStop();
 	}
 	
@@ -261,7 +265,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		private TaskManager taskManager;
 		
 		private Typeface customFontLight;
-		private Typeface customFontRegular;
+//		private Typeface customFontRegular;
 		private Typeface customFontSemiBold;
 		
 		public NowFragment() {
@@ -274,7 +278,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 					container, false);
 			
 	    	customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
-	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
+//	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
 	    	customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
 			
 			TextView titleTextView = (TextView)rootView.findViewById(R.id.currentTaskTitleTextView);
@@ -315,7 +319,11 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			if (currentTaskTextView == null) {
 				currentTaskTextView = (TextView)rootView.findViewById(R.id.currentTaskTextView);
 			}
-			currentTaskTextView.setText(taskManager.getCurrentTask(rootView.getContext()).toString());
+			
+			SharedPreferences sharedPrefs = rootView.getContext().getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
+			if (sharedPrefs.contains(PrefsStrings.TASKS_ADDED)) {
+				currentTaskTextView.setText(taskManager.getCurrentTask(rootView.getContext()).toString());
+			}
 		}	
 	}
 	
@@ -333,8 +341,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		private ArrayList<Task> tasks;
 		private TaskListAdapter tasksAdapter;
 		
-		private Typeface customFontLight;
-		private Typeface customFontRegular;
+//		private Typeface customFontLight;
+//		private Typeface customFontRegular;
 		private Typeface customFontSemiBold;
 		
 		public UpcomingFragment() {
@@ -352,8 +360,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
-	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
+//			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
+//	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
 	    	customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
 	    	
 	    	TextView titleTextView = (TextView)rootView.findViewById(R.id.upcomingTasksTextView);
@@ -381,47 +389,44 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				taskManager = TaskManager.getInstance();
 			}
 			
-			tasks = taskManager.getAllTasks(rootView.getContext());
+			SharedPreferences sharedPrefs = rootView.getContext().getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
+			if (sharedPrefs.contains(PrefsStrings.TASKS_ADDED)) {
 			
-			//Collections.sort(tasks); *Causes weird problems with the database. Even when done in the TaskListAdapter*
+				tasks = taskManager.getAllTasks(rootView.getContext());
 				
-			tasksAdapter = new TaskListAdapter(rootView.getContext(), R.layout.tasklist_textview, tasks);
+				//Collections.sort(tasks); *Causes weird problems with the database. Even when done in the TaskListAdapter*
 					
-			upcomingTasks = (ListView)rootView.findViewById(R.id.upcomingTasksListView);
-			upcomingTasks.setAdapter(tasksAdapter);
-			
-			tasksAdapter.notifyDataSetChanged();
+				tasksAdapter = new TaskListAdapter(rootView.getContext(), R.layout.tasklist_textview, tasks);
+						
+				upcomingTasks = (ListView)rootView.findViewById(R.id.upcomingTasksListView);
+				upcomingTasks.setAdapter(tasksAdapter);
 				
-			upcomingTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					String clickedTasks = parent.getItemAtPosition(position).toString();
-					if (clickedTasks.equals(getString(R.string.add_task))) {
-						Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
-						Bundle taskInfo = new Bundle();
-						taskInfo.putString("code", "addingTask");
-						addTaskIntent.putExtras(taskInfo);
-						startActivityForResult(addTaskIntent, ADD_TASK_CODE);
-					} else {
+				tasksAdapter.notifyDataSetChanged();
+					
+				upcomingTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 						Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
 						Task selectedTask = (Task)upcomingTasks.getItemAtPosition(position);
-		
+
 						Bundle taskInfo = new Bundle();
 						taskInfo.putString("code", "updatingTask");
+						taskInfo.putLong("taskId", selectedTask.id);
 						taskInfo.putString("taskText",selectedTask.taskText);
+						taskInfo.putString("date", selectedTask.dateTime.getTime().toString());
 						taskInfo.putString("reminder", selectedTask.reminder);
 						taskInfo.putString("proof", selectedTask.proof);
 						taskInfo.putInt("points", selectedTask.points);
-						taskInfo.putLong("taskId", selectedTask.id);
-						taskInfo.putString("date", selectedTask.dateTime.getTime().toString());
-						
+						taskInfo.putString("recurring", selectedTask.recurring);
+						taskInfo.putString("category", selectedTask.category);
+
 						addTaskIntent.putExtras(taskInfo);
 						startActivityForResult(addTaskIntent, ADD_TASK_CODE);
 					}
-				}
-			});
+				});
 		}
 	}
+}
 	
 	/**
 	 * A fragment representing the 'Info' tab.
@@ -430,8 +435,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		
 		private View rootView;
 		
-		private Typeface customFontLight;
-		private Typeface customFontRegular;
+//		private Typeface customFontLight;
+//		private Typeface customFontRegular;
 		private Typeface customFontSemiBold;
 	
 		public ProductivityFragment() {
@@ -449,8 +454,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
 			
-			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
-	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
+//			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
+//	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
 	    	customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
 	    	
 	    	TextView titleTextView = (TextView)rootView.findViewById(R.id.infoTitleTextView); 

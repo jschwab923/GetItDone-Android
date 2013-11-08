@@ -25,7 +25,7 @@
         android:layout_below="@+id/currentTaskTitleTextView"
         android:layout_marginLeft="13dp"
         android:layout_toLeftOf="@+id/doneButton"
-        android:text="@string/add_task"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#D5D5D5"
         android:textSize="18sp" />

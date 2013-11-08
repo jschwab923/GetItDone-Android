@@ -30,6 +30,8 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
 	private final static String KEY_PROOF = "proof";
 	private final static String KEY_POINTS = "points";
 	private final static String KEY_TEXT = "text";
+	private final static String KEY_RECURRING = "recurring";
+	private final static String KEY_CATEGORY = "category";
 	private final static String KEY_COMPLETE = "complete";
 	
 	@Override
@@ -53,6 +55,8 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
 	                + KEY_PROOF + " TEXT NOT NULL,"
 	                + KEY_POINTS + " INTEGER NOT NULL,"
 	                + KEY_TEXT + " TEXT NOT NULL,"
+	                + KEY_RECURRING + " TEXT NOT NULL,"
+	                + KEY_CATEGORY + " TEXT NOT NULL,"
 	                + KEY_COMPLETE + " INTEGER NOT NULL"
 	                + ")";
 		 
@@ -72,76 +76,57 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
      * All CRUD(Create, Read, Update, Delete) Operations
      */
  
-    // Add new Task
+    // Add entire taskList List<Task>
     public void addTaskList(List<Task> taskList, int newTasks) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        
+    	SQLiteDatabase db = this.getWritableDatabase();
         for (int i = 0; i < newTasks; i++ ) {
         	Task task = taskList.get(i);
-        	if (task.id != 1) {
-        		addTask(task);  	
-        	}
+           	Calendar currentDate = task.dateTime;
+
+        	ContentValues newValues = new ContentValues();
+        	newValues.put(KEY_ID, task.id);
+        	newValues.put(KEY_YEAR, currentDate.get(Calendar.YEAR));
+        	newValues.put(KEY_MONTH, currentDate.get(Calendar.MONTH));
+        	newValues.put(KEY_DAY, currentDate.get(Calendar.DAY_OF_MONTH));
+        	newValues.put(KEY_HOUR, currentDate.get(Calendar.HOUR_OF_DAY));
+        	newValues.put(KEY_MINUTE, currentDate.get(Calendar.MINUTE));
+        	newValues.put(KEY_REMINDER, task.reminder);
+        	newValues.put(KEY_PROOF, task.proof);
+        	newValues.put(KEY_POINTS, task.points);
+        	newValues.put(KEY_TEXT, task.taskText);
+        	newValues.put(KEY_RECURRING, task.recurring);
+        	newValues.put(KEY_CATEGORY, task.category);
+        	newValues.put(KEY_COMPLETE, false);
+        	// Inserting Row
+        	db.insert(TABLE_TASKS, null, newValues);
+
         }
         db.close(); // Closing database connection
     }
 
-    public void addTask(Task task) {
-    	SQLiteDatabase db = this.getWritableDatabase();
-
-    	Calendar currentDate = task.dateTime;
-
-    	ContentValues newValues = new ContentValues();
-    	newValues.put(KEY_ID, task.id);
-    	newValues.put(KEY_YEAR, currentDate.get(Calendar.YEAR));
-    	newValues.put(KEY_MONTH, currentDate.get(Calendar.MONTH));
-    	newValues.put(KEY_DAY, currentDate.get(Calendar.DAY_OF_MONTH));
-    	newValues.put(KEY_HOUR, currentDate.get(Calendar.HOUR_OF_DAY));
-    	newValues.put(KEY_MINUTE, currentDate.get(Calendar.MINUTE));
-    	newValues.put(KEY_REMINDER, task.reminder);
-    	newValues.put(KEY_PROOF, task.proof);
-    	newValues.put(KEY_POINTS, task.points);
-    	newValues.put(KEY_TEXT, task.taskText);
-    	newValues.put(KEY_COMPLETE, false);
-    	// Inserting Row
-    	db.insert(TABLE_TASKS, null, newValues);
-    	// Only happens when adding the defaultTask on first startup
-    	if (task.id == 1) {
-    		db.close(); // Closing database connection
-    	}
-    }
- 
     // Get soonest task
     public Task getSoonestTask(long taskId, Context context) {
-        Task task;
-       
-        if (taskId == 1) {
-	    	Calendar dateTime = new GregorianCalendar();
-	    	
-	    	String reminder = "none";
-	    	String proof = "none";
-	    	int points = 1;
-	    	String taskText = context.getString(R.string.add_task); 
-	    	
-	    	task = new Task(taskText, dateTime, reminder, proof, points, taskId);
-        } else {
-        	SQLiteDatabase db = this.getReadableDatabase();
-        	Cursor cursor = db.query(TABLE_TASKS, null, KEY_ID + "=?", new String[] {""+taskId}, null, null, null);
-        	cursor.moveToFirst();
-        	int year = cursor.getInt(1);
-        	int month = cursor.getInt(2);
-        	int day = cursor.getInt(3);
-        	int hour = cursor.getInt(4);
-        	int minute = cursor.getInt(5);
-        	Calendar dateTime = new GregorianCalendar(year, month, day, hour, minute);
+    	Task task;
 
-        	String reminder = cursor.getString(6);
-        	String proof = cursor.getString(7);
-        	int points = cursor.getInt(8);
-        	String taskText = cursor.getString(9); 
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	Cursor cursor = db.query(TABLE_TASKS, null, KEY_ID + "=?", new String[] {""+taskId}, null, null, null);
+    	cursor.moveToFirst();
+    	int year = cursor.getInt(1);
+    	int month = cursor.getInt(2);
+    	int day = cursor.getInt(3);
+    	int hour = cursor.getInt(4);
+    	int minute = cursor.getInt(5);
+    	Calendar dateTime = new GregorianCalendar(year, month, day, hour, minute);
 
-        	task = new Task(taskText, dateTime, reminder, proof, points, taskId);
-        }
-        return task;
+    	String reminder = cursor.getString(6);
+    	String proof = cursor.getString(7);
+    	int points = cursor.getInt(8);
+    	String taskText = cursor.getString(9); 
+    	String recurring = cursor.getString(10);
+    	String category = cursor.getString(11);
+
+    	task = new Task(taskText, dateTime, reminder, proof, points, category, recurring, taskId);
+    	return task;
     }
      
     // Get list of all Tasks
@@ -169,10 +154,14 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
             	String reminder = cursor.getString(6);
             	String proof = cursor.getString(7);
             	int points = cursor.getInt(8);
-            	String taskText = cursor.getString(9); 
+            	String taskText = cursor.getString(9);
+            	String recurring = cursor.getString(10);
+            	String category = cursor.getString(11);
+            	int complete = cursor.getInt(12);
             	
-            	Task task = new Task(taskText, dateTime, reminder, proof, points, id);
-      
+            	Task task = new Task(taskText, dateTime, reminder, proof, points, category, recurring, id);
+            	task.complete = complete; 
+            	
                 TaskList.add(0, task);
             } while (cursor.moveToNext());
         }
@@ -194,10 +183,12 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
         newValues.put(KEY_REMINDER, taskToUpdate.reminder);
         newValues.put(KEY_PROOF, taskToUpdate.proof);
         newValues.put(KEY_POINTS, taskToUpdate.points);
+        newValues.put(KEY_RECURRING, taskToUpdate.recurring);
+    	newValues.put(KEY_CATEGORY, taskToUpdate.category);
         newValues.put(KEY_TEXT, taskToUpdate.taskText);
         
         // updating row
-        return db.update(TABLE_TASKS, newValues, KEY_ID + "=?",
+        return db.update(TABLE_TASKS, newValues, KEY_ID + "= ?",
                 new String[] { String.valueOf(taskToUpdate.id) });
     }
  
@@ -211,8 +202,14 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
  
     // Mark task as done in database
     public void taskDone(long id) {
-    	String where = KEY_ID + "=" + id;
     	SQLiteDatabase db = this.getWritableDatabase();
-    	db.update(TABLE_TASKS, null , where, null);
+    	
+    	// Update just the KEY_COMPLETE column in the proper row
+    	ContentValues updateCompleteValue = new ContentValues();
+    	String where = KEY_ID + "=" + id;
+    	updateCompleteValue.put("KEY_COMPLETE", true);
+    	db.update(TABLE_TASKS, updateCompleteValue, where, null);
+    	
+    	db.close();
     }
 }

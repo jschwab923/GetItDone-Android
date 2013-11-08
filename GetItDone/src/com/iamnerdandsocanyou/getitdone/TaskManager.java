@@ -1,7 +1,6 @@
 package com.iamnerdandsocanyou.getitdone;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,33 +28,24 @@ final public class TaskManager {
 	}
 	
 	public void setup(Context context) {
-		if (dbManager == null) {
-			dbManager = new DatabaseContract(context);
-			Thread dbThread = new Thread(dbManager);
-			dbThread.start();
-		}
-		// Check to see if first startup tasks need to be completed.
+		// Check to see if first startup has already happened
 		SharedPreferences prefs = context.getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
-		if (!(prefs.contains(PrefsStrings.FIRST_STARTUP_DONE))) {
-			// If so insert the default, always shown "Add task" option to the database and allTasks list.
-			Task defaultAddTask = new Task(context.getString(R.string.add_task), new GregorianCalendar(), "none", "none", 1, 1);
-			dbManager.addTask(defaultAddTask);
-			// Save as currentTask to be returned when getCurrentTask is called
-			currentTask = defaultAddTask;
-			// Save defaultTask id as the SOONEST_TASK id in SharedPreferences and update NEW_TASKS count.
-			prefs.edit().putLong(PrefsStrings.SOONEST_TASK, 1)
-						.commit();
-			
-			allTasks = (ArrayList<Task>)dbManager.getAllTasks();
-		} else {
+		if ((prefs.contains(PrefsStrings.FIRST_STARTUP_DONE))) {
+			if (dbManager == null) {
+				dbManager = new DatabaseContract(context);
+				Thread dbThread = new Thread(dbManager);
+				dbThread.start();
+			}
 			allTasks = (ArrayList<Task>)dbManager.getAllTasks();
 			if(allTasks.size() > 1) {
 				long taskId = prefs.getLong(PrefsStrings.SOONEST_TASK, 1);
 				currentTask = dbManager.getSoonestTask(taskId, context);
 			} else {
-				currentTask = allTasks.get(0);
+				if (allTasks.size() == 1) {
+					currentTask = allTasks.get(0);
+				}
 			}
-		}
+		} 
 	}
 	
 	/** Returns an array containing all current, not done, tasks that 
@@ -82,8 +72,8 @@ final public class TaskManager {
 		return currentTask;
 	}
 	
-	/** Adds a task and all it's associated information to the SQLite database.
-	 * 
+	/** Adds a task and all it's associated information to the allTask ArrayList.
+	 *  Updates the count of new tasks to be eventually written to database. 
 	 * @param taskInfo
 	 */
 	public boolean addTask(Task newTask, Context context) {
@@ -95,16 +85,18 @@ final public class TaskManager {
 		SharedPreferences startupInfo = context.getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
 		SharedPreferences.Editor prefsEditor = startupInfo.edit();
 		// Check SharedPreferences to see if no tasks have been added, or if current task count is 0.
-		if (!startupInfo.contains(PrefsStrings.TASKS_ADDED) || startupInfo.getInt(PrefsStrings.TASKS_ADDED, 0) == 0) {
+		if (!startupInfo.contains(PrefsStrings.TASKS_ADDED)) {
 			// If so, update SharedPreferences to indicate that one task has been added
 			// and save its taskId as the SOONEST_TASK in SharedPreferences
 			// and start NEW_TASKS count.
 			prefsEditor.putLong(PrefsStrings.SOONEST_TASK, newTask.id)
 					.putInt(PrefsStrings.TASKS_ADDED, 1)
-					.putInt(PrefsStrings.NEW_TASKS, 1)
+					.putInt(PrefsStrings.NEW_TASKS, 0)
 					.commit();
 			
 			currentTask = newTask;
+			
+			allTasks = new ArrayList<Task>();
 		} else {
 			// Check to see if task being added has a sooner date than the current soonest task.
 			// Or if the current SOONEST_TASK is the default task (taskId of 1)
@@ -119,13 +111,15 @@ final public class TaskManager {
 			int currentTaskCount = startupInfo.getInt(PrefsStrings.TASKS_ADDED, 1);
 			prefsEditor.putInt(PrefsStrings.TASKS_ADDED, currentTaskCount + 1).commit();
 		}
-		allTasks.add(0, newTask);
+		
+		allTasks.add(newTask);
+		
 		// Update that there is another task in the allTasks list that hasn't yet been 
 		// written to the database. 
 		prefsEditor.putInt(PrefsStrings.NEW_TASKS, startupInfo.getInt(PrefsStrings.NEW_TASKS, 1) + 1)
 				   .commit();
 		
-		if (allTasks.size() > 1) {
+		if (allTasks.size() >= 1) {
 			return true;
 		} else {
 			return false;
@@ -181,13 +175,16 @@ final public class TaskManager {
 			new Thread(dbManager).start();
 		}
 		
-		SharedPreferences prefs = context.getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
-		int newTasks = prefs.getInt(PrefsStrings.NEW_TASKS, 1);
-		dbManager.addTaskList(allTasks, newTasks);
+		if (allTasks.size() != 0) {
+			SharedPreferences prefs = context.getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
+			int newTasks = prefs.getInt(PrefsStrings.NEW_TASKS, 0);
+			dbManager.addTaskList(allTasks, newTasks);
+			
+			// Update the NEW_TASKS count to indicate that all tasks have 
+			// been written to the database.
+			prefs.edit().putInt(PrefsStrings.NEW_TASKS, 0).commit();
+		}
 		
-		// Update the NEW_TASKS count to indicate that all tasks have 
-		// been written to the database.
-		prefs.edit().putInt(PrefsStrings.NEW_TASKS, 0).commit();
 	}
 	
 	public void releaseResources() {
