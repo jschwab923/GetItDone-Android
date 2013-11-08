@@ -112,7 +112,7 @@ final public class TaskManager {
 			prefsEditor.putInt(PrefsStrings.TASKS_ADDED, currentTaskCount + 1).commit();
 		}
 		
-		allTasks.add(newTask);
+		allTasks.add(0, newTask);
 		
 		// Update that there is another task in the allTasks list that hasn't yet been 
 		// written to the database. 
