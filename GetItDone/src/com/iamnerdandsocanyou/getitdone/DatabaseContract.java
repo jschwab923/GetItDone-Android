@@ -7,6 +7,7 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -105,11 +106,13 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
     }
 
     // Get soonest task
-    public Task getSoonestTask(long taskId, Context context) {
+    public Task getSoonestTask(Context context) {
+    	SharedPreferences sharedPrefs = context.getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
+    	long soonestTaskId = sharedPrefs.getLong(PrefsStrings.SOONEST_TASK, 0);
+    	
     	Task task;
-
     	SQLiteDatabase db = this.getReadableDatabase();
-    	Cursor cursor = db.query(TABLE_TASKS, null, KEY_ID + "=?", new String[] {""+taskId}, null, null, null);
+    	Cursor cursor = db.query(TABLE_TASKS, null, KEY_ID + "=?", new String[] {""+soonestTaskId}, null, null, null);
     	cursor.moveToFirst();
     	int year = cursor.getInt(1);
     	int month = cursor.getInt(2);
@@ -125,7 +128,7 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
     	String recurring = cursor.getString(10);
     	String category = cursor.getString(11);
 
-    	task = new Task(taskText, dateTime, reminder, proof, points, category, recurring, taskId);
+    	task = new Task(taskText, dateTime, reminder, proof, points, category, recurring, soonestTaskId);
     	return task;
     }
      
@@ -183,19 +186,19 @@ public class DatabaseContract extends SQLiteOpenHelper implements Runnable {
         newValues.put(KEY_REMINDER, taskToUpdate.reminder);
         newValues.put(KEY_PROOF, taskToUpdate.proof);
         newValues.put(KEY_POINTS, taskToUpdate.points);
+        newValues.put(KEY_TEXT, taskToUpdate.taskText);
         newValues.put(KEY_RECURRING, taskToUpdate.recurring);
     	newValues.put(KEY_CATEGORY, taskToUpdate.category);
-        newValues.put(KEY_TEXT, taskToUpdate.taskText);
         
         // updating row
-        return db.update(TABLE_TASKS, newValues, KEY_ID + "= ?",
+        return db.update(TABLE_TASKS, newValues, KEY_ID + "=?",
                 new String[] { String.valueOf(taskToUpdate.id) });
     }
  
     // Delete a single Task
     public void deleteTask(Task taskToDelete) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TASKS, KEY_ID + " = ?",
+        db.delete(TABLE_TASKS, KEY_ID + " =?",
                 new String[] { String.valueOf(taskToDelete.id) });
         db.close();
     }

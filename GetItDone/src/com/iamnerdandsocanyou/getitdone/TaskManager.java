@@ -39,7 +39,7 @@ final public class TaskManager {
 			allTasks = (ArrayList<Task>)dbManager.getAllTasks();
 			if(allTasks.size() > 1) {
 				long taskId = prefs.getLong(PrefsStrings.SOONEST_TASK, 1);
-				currentTask = dbManager.getSoonestTask(taskId, context);
+				currentTask = dbManager.getSoonestTask(context);
 			} else {
 				if (allTasks.size() == 1) {
 					currentTask = allTasks.get(0);
@@ -99,8 +99,7 @@ final public class TaskManager {
 			allTasks = new ArrayList<Task>();
 		} else {
 			// Check to see if task being added has a sooner date than the current soonest task.
-			// Or if the current SOONEST_TASK is the default task (taskId of 1)
-			if (newTask.id < startupInfo.getLong(PrefsStrings.SOONEST_TASK, newTask.id)) {
+			if (newTask.dateTime.compareTo(dbManager.getSoonestTask(context).dateTime) < 0) {
 				// If so update the SOONEST_TASK taskId in sharedPreferences and reassign the 
 				// currentTask member variable.
 				prefsEditor.putLong(PrefsStrings.SOONEST_TASK, newTask.id);		
@@ -147,7 +146,7 @@ final public class TaskManager {
 		}
 		dbManager.updateTask(taskToUpdate);
 		allTasks = (ArrayList<Task>)dbManager.getAllTasks();
-		currentTask = dbManager.getSoonestTask(context.getSharedPreferences(PrefsStrings.PREFS_NAME, 0).getLong(PrefsStrings.SOONEST_TASK, currentTask.id), context);
+		currentTask = dbManager.getSoonestTask(context);
 		return true;
 	}
 	

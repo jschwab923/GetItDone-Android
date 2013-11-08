@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -340,9 +341,10 @@ public class AddTaskActivity extends Activity {
 			// Creates taskId based on the scheduled time. Later tasks will always be a larger number.
 			long taskId;
 			if (taskInfo.getString("code").equals("addingTask")) {
+				Random idGen = new Random(); 
 				String dateAsNum = "" + timeDate.get(Calendar.YEAR) + "" + timeDate.get(Calendar.MONTH) + "" + timeDate.get(Calendar.DATE)
 								+ "" + timeDate.get(Calendar.HOUR) + "" + timeDate.get(Calendar.MINUTE);
-				taskId  = Long.parseLong(dateAsNum);
+				taskId  = Long.parseLong(dateAsNum) + idGen.nextInt();
 			} else {
 				taskId = taskInfo.getLong("taskId");
 			}
