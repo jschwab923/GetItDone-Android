@@ -38,7 +38,6 @@ final public class TaskManager {
 			}
 			allTasks = (ArrayList<Task>)dbManager.getAllTasks();
 			if(allTasks.size() > 1) {
-				long taskId = prefs.getLong(PrefsStrings.SOONEST_TASK, 1);
 				currentTask = dbManager.getSoonestTask(context);
 			} else {
 				if (allTasks.size() == 1) {
@@ -145,7 +144,9 @@ final public class TaskManager {
 			new Thread(dbManager).start();
 		}
 		dbManager.updateTask(taskToUpdate);
+		
 		allTasks = (ArrayList<Task>)dbManager.getAllTasks();
+		
 		currentTask = dbManager.getSoonestTask(context);
 		return true;
 	}

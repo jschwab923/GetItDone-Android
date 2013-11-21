@@ -24,8 +24,8 @@ public class TaskListAdapter extends ArrayAdapter<Task> {
                 View v = convertView;
                 
                 if (v == null) {
-                        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                        v = inflater.inflate(R.layout.tasklist_textview, null);
+                	LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    v = inflater.inflate(R.layout.tasklist_textview, null);
                 }
                 
                 Typeface customFontLight = Typeface.createFromAsset(v.getContext().getAssets(), v.getContext().getString(R.string.custom_font_light));
