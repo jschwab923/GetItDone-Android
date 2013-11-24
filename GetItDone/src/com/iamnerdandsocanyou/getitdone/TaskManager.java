@@ -175,7 +175,7 @@ final public class TaskManager {
 			new Thread(dbManager).start();
 		}
 		
-		if (allTasks.size() != 0) {
+		if (allTasks != null && allTasks.size() != 0) {
 			SharedPreferences prefs = context.getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
 			int newTasks = prefs.getInt(PrefsStrings.NEW_TASKS, 0);
 			dbManager.addTaskList(allTasks, newTasks);

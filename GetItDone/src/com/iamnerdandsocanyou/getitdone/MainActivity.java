@@ -131,6 +131,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			Intent settingsIntent = new Intent(this, SettingsActivity.class);
 			startActivity(settingsIntent);
 			return true;
+		case(R.id.action_add_task):
+			Intent addTaskIntent = new Intent(this, AddTaskActivity.class);
+			Bundle taskInfo = new Bundle();
+			taskInfo.putString("code", "addingTask");
+			addTaskIntent.putExtras(taskInfo);
+			startActivity(addTaskIntent);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -333,7 +340,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	public static class UpcomingFragment extends Fragment {
 		
 		// Request codes for launching sub-activities.
-		private final int ADD_TASK_CODE = 1;
+		private final int REQUEST_CODE_ADDTASK = 1;
 		
 		private TaskManager taskManager;
 		private View rootView;
@@ -353,7 +360,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				Bundle savedInstanceState) {			
 			rootView = inflater.inflate(R.layout.upcoming,
 					container, false);
-			
 			return rootView;
 		}
 		
@@ -391,39 +397,54 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			
 			SharedPreferences sharedPrefs = rootView.getContext().getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
 			if (sharedPrefs.contains(PrefsStrings.TASKS_ADDED)) {
-			
-				tasks = taskManager.getAllTasks(rootView.getContext());
+				tasks = taskManager.getAllTasks(rootView.getContext());				
+				upcomingTasks = (ListView)rootView.findViewById(R.id.list);
 				
-				//Collections.sort(tasks); *Causes weird problems with the database. Even when done in the TaskListAdapter*
-					
-				tasksAdapter = new TaskListAdapter(rootView.getContext(), R.layout.tasklist_textview, tasks);
-						
-				upcomingTasks = (ListView)rootView.findViewById(R.id.upcomingTasksListView);
-				upcomingTasks.setAdapter(tasksAdapter);
+				if (tasks.size() != 0) {
+					//Collections.sort(tasks); Does not work
+					tasksAdapter = new TaskListAdapter(rootView.getContext(), R.layout.tasklist_textview, tasks);
+					upcomingTasks.setAdapter(tasksAdapter);
+				} 
 				
-				tasksAdapter.notifyDataSetChanged();
-					
-				upcomingTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
-						Task selectedTask = (Task)upcomingTasks.getItemAtPosition(position);
-
-						Bundle taskInfo = new Bundle();
-						taskInfo.putString("code", "updatingTask");
-						taskInfo.putLong("taskId", selectedTask.id);
-						taskInfo.putString("taskText",selectedTask.taskText);
-						taskInfo.putString("date", selectedTask.dateTime.getTime().toString());
-						taskInfo.putString("reminder", selectedTask.reminder);
-						taskInfo.putString("proof", selectedTask.proof);
-						taskInfo.putInt("points", selectedTask.points);
-						taskInfo.putString("recurring", selectedTask.recurring);
-						taskInfo.putString("category", selectedTask.category);
-
-						addTaskIntent.putExtras(taskInfo);
-						startActivityForResult(addTaskIntent, ADD_TASK_CODE);
-					}
-				});
+				if (tasks != null && tasks.size() != 0) {
+					tasksAdapter.notifyDataSetChanged();
+				}
+				
+				if (tasks.size() != 0) {
+					upcomingTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
+							Task selectedTask = (Task)upcomingTasks.getItemAtPosition(position);
+	
+							Bundle taskInfo = new Bundle();
+							taskInfo.putString("code", "updatingTask");
+							taskInfo.putLong("taskId", selectedTask.id);
+							taskInfo.putString("taskText",selectedTask.taskText);
+							taskInfo.putString("date", selectedTask.dateTime.getTime().toString());
+							taskInfo.putString("reminder", selectedTask.reminder);
+							taskInfo.putString("proof", selectedTask.proof);
+							taskInfo.putInt("points", selectedTask.points);
+							taskInfo.putString("recurring", selectedTask.recurring);
+							taskInfo.putString("category", selectedTask.category);
+	
+							addTaskIntent.putExtras(taskInfo);
+							startActivityForResult(addTaskIntent, REQUEST_CODE_ADDTASK);
+						}
+					});
+				} else { // No tasks in task list
+					upcomingTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
+							
+							Bundle taskInfo = new Bundle();
+							taskInfo.putString("code", "addingTask");
+							addTaskIntent.putExtras(taskInfo);
+							startActivityForResult(addTaskIntent, REQUEST_CODE_ADDTASK);
+						}
+					});
+				}
 		}
 	}
 }

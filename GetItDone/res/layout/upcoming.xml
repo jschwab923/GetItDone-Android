@@ -1,24 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
     android:background="#333333">
-
-    <TextView
-        android:id="@+id/upcomingTasksTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp"
-        android:textColor="#D5D5D5"        
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/upcoming_tasks" />
-
+    
     <ListView
-        android:id="@+id/upcomingTasksListView"
+        android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/addTaskButton"
@@ -29,11 +18,25 @@
         android:drawSelectorOnTop="true">
     </ListView>
     
+    <TextView
+        android:id="@id/upcomingTasksTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp"
+        android:textColor="#D5D5D5" 
+        android:onClick="clickListener"       
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/upcoming_tasks" />
+    
      <View
         android:id="@+id/horizonLineView"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:layout_below="@+id/upcomingTasksListView"
+        android:layout_below="@id/android:list"
         android:background="#33B5E5"/>
 
     <Button
@@ -56,7 +59,7 @@
         android:id="@+id/vertLineView"
         android:layout_width="1dp"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/addTaskButton"
+        android:layout_alignTop="@id/addTaskButton"
         android:background="#33B5E5"
         android:layout_centerHorizontal="true" />
     
@@ -66,7 +69,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/vertLineView"
+        android:layout_toLeftOf="@id/vertLineView"
         android:gravity="center"
         android:onClick="clickListener"
         android:paddingTop="5dp"

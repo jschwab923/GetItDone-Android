@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="11"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="19" />
 
     <application
         android:allowBackup="true"
@@ -28,7 +28,7 @@
             android:parentActivityName="com.iamnerdandsocanyou.getitdone.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.getitdone.MainActivity" />
+                android:value="com.iamnerdandsocanyou.getitdone.MainActivity" />
         </activity>
         <activity
             android:name="com.iamnerdandsocanyou.getitdone.SettingsActivity"

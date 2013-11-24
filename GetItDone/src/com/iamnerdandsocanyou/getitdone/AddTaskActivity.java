@@ -51,6 +51,7 @@ public class AddTaskActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.activity_add_task);
+		
 		// Show the Up button in the action bar.
 		setupActionBar();
 			
