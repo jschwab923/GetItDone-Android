@@ -7,7 +7,7 @@
     android:paddingTop="5dp"
     android:paddingBottom="5dp"
     android:paddingLeft="25dp"
-    android:background="#333333"
+    android:background="@drawable/background_list_item_activated"
     android:textColor="#D5D5D5">
 
 </TextView>

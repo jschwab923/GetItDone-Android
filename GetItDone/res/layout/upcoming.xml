@@ -1,25 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" 
     android:background="#333333">
     
-    <ListView
-        android:id="@id/android:list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/addTaskButton"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/upcomingTasksTextView"
-        android:textColor="#D5D5D5" 
-        android:paddingTop="5dp" 
-        android:drawSelectorOnTop="true">
-    </ListView>
-    
+   
     <TextView
-        android:id="@id/upcomingTasksTextView"
+        android:id="@+id/upcomingTasksTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -32,11 +20,23 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/upcoming_tasks" />
     
+    <ListView
+        android:id="@+id/listViewTaskList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/addTaskButton"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/upcomingTasksTextView"
+        android:textColor="#D5D5D5" 
+        android:paddingTop="5dp" 
+        android:drawSelectorOnTop="true">
+    </ListView>
+          
      <View
         android:id="@+id/horizonLineView"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
-        android:layout_below="@id/android:list"
+        android:layout_below="@id/listViewTaskList"
         android:background="#33B5E5"/>
 
     <Button

@@ -14,11 +14,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -360,6 +363,44 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				Bundle savedInstanceState) {			
 			rootView = inflater.inflate(R.layout.upcoming,
 					container, false);
+			
+			// Set up ListView for tasks and contextual action mode
+			upcomingTasks = (ListView)rootView.findViewById(R.id.listViewTaskList);
+			upcomingTasks.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+			upcomingTasks.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+
+				@Override
+				public boolean onActionItemClicked(ActionMode mode,
+						MenuItem item) {
+					// TODO Auto-generated method stub
+					mode.finish();
+					return true;
+				}
+
+				@Override
+				public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+					MenuInflater inflater = mode.getMenuInflater();
+					inflater.inflate(R.menu.task_list_context, menu);
+					return true;
+				}
+
+				@Override
+				public void onDestroyActionMode(ActionMode mode) {
+
+				}
+
+				@Override
+				public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+					return false;
+				}
+
+				@Override
+				public void onItemCheckedStateChanged(ActionMode mode,
+						int position, long id, boolean checked) { 
+				}
+				
+			});
+			
 			return rootView;
 		}
 		
@@ -398,7 +439,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			SharedPreferences sharedPrefs = rootView.getContext().getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
 			if (sharedPrefs.contains(PrefsStrings.TASKS_ADDED)) {
 				tasks = taskManager.getAllTasks(rootView.getContext());				
-				upcomingTasks = (ListView)rootView.findViewById(R.id.list);
 				
 				if (tasks.size() != 0) {
 					//Collections.sort(tasks); Does not work
