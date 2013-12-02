@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,7 +44,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	private ViewPager mViewPager;
-	
+
 	/**
 	 * Object for handling all "Model" activities, retrieving task
 	 * data, adding new tasks to the database etc. Will be used 
@@ -51,28 +52,28 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	 * actions.
 	 */
 	private TaskManager taskManager;
-	
+
 	private SharedPreferences sharedPrefs;
-			
+
 	// Constants to represent the three different tabs.
 	// private final int FIRST_PAGE = 0;
 	// private final int SECOND_PAGE = 1;
 	// private final int THIRD_PAGE = 2;	
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		// Get a reference to the title bar TextView
-//		final int actionBarTitle = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
-//		final TextView title = (TextView)getWindow().findViewById(actionBarTitle);
+		//		final int actionBarTitle = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
+		//		final TextView title = (TextView)getWindow().findViewById(actionBarTitle);
 
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		
+
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
@@ -85,14 +86,14 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		// When swiping between different sections, select the corresponding
 		// tab, and update the page content based on selected tab. 
 		mViewPager
-				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-					@Override
-					public void onPageSelected(int position) {
-						actionBar.setSelectedNavigationItem(position);
-					}
-				});
-		
-		
+		.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				actionBar.setSelectedNavigationItem(position);
+			}
+		});
+
+
 		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
 			// Create a tab with text corresponding to the page title defined by
@@ -103,10 +104,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
-		
+
 		taskManager = TaskManager.getInstance();
 		taskManager.setup(this);
-		
+
 		sharedPrefs = getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
 		if(!sharedPrefs.contains(PrefsStrings.FIRST_STARTUP_DONE)) {		
 			SharedPreferences.Editor prefsEditor = sharedPrefs.edit();
@@ -114,33 +115,33 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			prefsEditor.commit();
 		}
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);	
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case(R.id.action_settings):
 			Intent settingsIntent = new Intent(this, SettingsActivity.class);
-			startActivity(settingsIntent);
-			return true;
+		startActivity(settingsIntent);
+		return true;
 		case(R.id.action_add_task):
 			Intent addTaskIntent = new Intent(this, AddTaskActivity.class);
-			Bundle taskInfo = new Bundle();
-			taskInfo.putString("code", "addingTask");
-			addTaskIntent.putExtras(taskInfo);
-			startActivity(addTaskIntent);
-			return true;
+		Bundle taskInfo = new Bundle();
+		taskInfo.putString("code", "addingTask");
+		addTaskIntent.putExtras(taskInfo);
+		startActivity(addTaskIntent);
+		return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -162,8 +163,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
 	}
-	
-	
+
+
 	@Override
 	public void onStop() {
 		if (sharedPrefs.getInt(PrefsStrings.NEW_TASKS, 0) >= 1) {
@@ -171,44 +172,44 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		}
 		super.onStop();
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		taskManager.releaseResources();
 		taskManager.saveTaskList(this);
 		super.onDestroy();
 	}
-	
+
 	/**
-	* Directs all button clicks to the appropriate method
-	*/
+	 * Directs all button clicks to the appropriate method
+	 */
 	public void clickListener(View v) {
 		switch(v.getId()) {
 		case(R.id.addTaskButton):
 			Intent addTaskIntent = new Intent(this, AddTaskActivity.class);
-			Bundle taskInfo = new Bundle();
-			taskInfo.putString("code", "addingTask");
-			addTaskIntent.putExtras(taskInfo);
-			startActivity(addTaskIntent);
-			break;
+		Bundle taskInfo = new Bundle();
+		taskInfo.putString("code", "addingTask");
+		addTaskIntent.putExtras(taskInfo);
+		startActivity(addTaskIntent);
+		break;
 		case(R.id.statsButton):
 			taskManager.getStats();
-			break;
+		break;
 		case(R.id.tipTextView):
 			changeTip(v);
-			break;
+		break;
 		case(R.id.action_settings):
 			Intent settingsIntent = new Intent(this, SettingsActivity.class);
-			startActivity(settingsIntent);
+		startActivity(settingsIntent);
 		}
 	}
-		
+
 	private void changeTip(View tipText) {
 		String newTip = taskManager.getTip();
 		TextView tipTextView = (TextView)tipText;
 		tipTextView.setText(newTip);
 	}
-	
+
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.
@@ -224,7 +225,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			// getItem is called to instantiate the fragment for the given page.
 			// Return the correct fragment based on current selected actionBar position
 			// (defined as a static inner class below) 
-			
+
 			Fragment fragment;
 			switch(position) {
 			case 0:
@@ -264,20 +265,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			return null;
 		}
 	}
-		
+
 	/**
 	 * A fragment representing the 'Now' tab.
 	 */
 	public static class NowFragment extends Fragment {
-		
+
 		private static View rootView;
 		private TextView currentTaskTextView;
 		private TaskManager taskManager;
-		
+
 		private Typeface customFontLight;
-//		private Typeface customFontRegular;
+		//		private Typeface customFontRegular;
 		private Typeface customFontSemiBold;
-		
+
 		public NowFragment() {
 		}
 
@@ -286,42 +287,42 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				Bundle savedInstanceState) {			
 			rootView = inflater.inflate(R.layout.now,
 					container, false);
-			
-	    	customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
-//	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
-	    	customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
-			
+
+			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
+			//	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
+			customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
+
 			TextView titleTextView = (TextView)rootView.findViewById(R.id.currentTaskTitleTextView);
 			titleTextView.setTypeface(customFontSemiBold);
-			
+
 			currentTaskTextView = (TextView)rootView.findViewById(R.id.currentTaskTextView);
 			currentTaskTextView.setTypeface(customFontLight);
-			
+
 			TextView tipTextView = (TextView)rootView.findViewById(R.id.tipTextView);
 			tipTextView.setTypeface(customFontLight);
-			
+
 			Button doneButton = (Button)rootView.findViewById(R.id.doneButton);
 			doneButton.setTypeface(customFontLight);
-			
+
 			return rootView;
 		}
-		
+
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
 		}
-		
+
 		@Override
 		public void onResume() {
 			super.onResume();
 			loadContent();
 		}
-		
+
 		@Override
 		public void onStop() {
 			super.onStop();
 		}
-		
+
 		private void loadContent() {
 			if(taskManager == null) {
 				taskManager = TaskManager.getInstance();
@@ -329,56 +330,83 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			if (currentTaskTextView == null) {
 				currentTaskTextView = (TextView)rootView.findViewById(R.id.currentTaskTextView);
 			}
-			
+
 			SharedPreferences sharedPrefs = rootView.getContext().getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
 			if (sharedPrefs.contains(PrefsStrings.TASKS_ADDED)) {
 				currentTaskTextView.setText(taskManager.getCurrentTask(rootView.getContext()).toString());
 			}
 		}	
 	}
-	
+
 	/**
 	 * A fragment representing the 'Upcoming' tab.
 	 */
 	public static class UpcomingFragment extends Fragment {
-		
-		// Request codes for launching sub-activities.
-		private final int REQUEST_CODE_ADDTASK = 1;
-		
+
 		private TaskManager taskManager;
 		private View rootView;
 		private ListView upcomingTasks;
 		private ArrayList<Task> tasks;
 		private TaskListAdapter tasksAdapter;
-		
-//		private Typeface customFontLight;
-//		private Typeface customFontRegular;
+
+		//		private Typeface customFontLight;
+		//		private Typeface customFontRegular;
 		private Typeface customFontSemiBold;
-		
+
 		public UpcomingFragment() {
 		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {			
+				Bundle savedInstanceState) {                        
 			rootView = inflater.inflate(R.layout.upcoming,
 					container, false);
-			
+
 			// Set up ListView for tasks and contextual action mode
 			upcomingTasks = (ListView)rootView.findViewById(R.id.listViewTaskList);
 			upcomingTasks.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 			upcomingTasks.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-
+				
+				ArrayList<Integer> checkedItemPositions;
+				
 				@Override
-				public boolean onActionItemClicked(ActionMode mode,
-						MenuItem item) {
-					// TODO Auto-generated method stub
-					mode.finish();
+				public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+					switch(item.getItemId()) {
+					case(R.id.edit_task_context_item):
+						int checkedCount = upcomingTasks.getCheckedItemCount();
+						if (checkedCount == 0) {
+							break;
+						} else if (checkedCount == 1) {
+							Task selectedTask = (Task)upcomingTasks.getItemAtPosition(checkedItemPositions.get(0));
+							Bundle taskInfo = createTaskInfoBundle(selectedTask);
+							taskInfo.putString("code", "updatingTask");
+							
+							Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
+							addTaskIntent.putExtras(taskInfo);
+							startActivity(addTaskIntent);
+							tasksAdapter.notifyDataSetChanged();
+						} else {
+							for(Integer i : checkedItemPositions) {
+								Task currentTask = (Task)upcomingTasks.getItemAtPosition(i);
+								Bundle taskInfo = createTaskInfoBundle(currentTask);
+								taskInfo.putString("code", "updatingTask");
+								Intent updateTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
+								updateTaskIntent.putExtras(taskInfo);
+								startActivity(updateTaskIntent);
+							}
+							tasksAdapter.notifyDataSetChanged();
+						}
+						mode.finish();
+						break;
+					default:
+						mode.finish();
+					}
 					return true;
 				}
 
 				@Override
 				public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+					checkedItemPositions = new ArrayList<Integer>();
 					MenuInflater inflater = mode.getMenuInflater();
 					inflater.inflate(R.menu.task_list_context, menu);
 					return true;
@@ -395,111 +423,121 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				}
 
 				@Override
-				public void onItemCheckedStateChanged(ActionMode mode,
-						int position, long id, boolean checked) { 
+				public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) { 
+					if (checked) {
+						checkedItemPositions.add(0, position);
+					} else {
+						Integer positionInteger = position;
+						checkedItemPositions.remove(positionInteger);
+					}
 				}
-				
+
 			});
-			
+
 			return rootView;
 		}
-		
+
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-//			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
-//	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
-	    	customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
-	    	
-	    	TextView titleTextView = (TextView)rootView.findViewById(R.id.upcomingTasksTextView);
-	    	titleTextView.setTypeface(customFontSemiBold);
-	    }
-		
+			//			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
+			//	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
+			customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
+
+			TextView titleTextView = (TextView)rootView.findViewById(R.id.upcomingTasksTextView);
+			titleTextView.setTypeface(customFontSemiBold);
+		}
+
 		@Override
 		public void onActivityResult(int requestCode, int resultCode, Intent data) {
 			super.onActivityResult(requestCode, resultCode, data);
 		}
-		
+
 		@Override
 		public void onResume() {
 			super.onResume();
 			loadContent();
 		}
-		
+
 		@Override
 		public void onStop() {
 			super.onStop();
 		}
-		
+
 		private void loadContent() {
 			if (taskManager == null) {
 				taskManager = TaskManager.getInstance();
 			}
-			
+
 			SharedPreferences sharedPrefs = rootView.getContext().getSharedPreferences(PrefsStrings.PREFS_NAME, 0);
 			if (sharedPrefs.contains(PrefsStrings.TASKS_ADDED)) {
 				tasks = taskManager.getAllTasks(rootView.getContext());				
-				
+
 				if (tasks.size() != 0) {
 					//Collections.sort(tasks); Does not work
 					tasksAdapter = new TaskListAdapter(rootView.getContext(), R.layout.tasklist_textview, tasks);
 					upcomingTasks.setAdapter(tasksAdapter);
 				} 
-				
+
 				if (tasks != null && tasks.size() != 0) {
 					tasksAdapter.notifyDataSetChanged();
 				}
-				
+
 				if (tasks.size() != 0) {
 					upcomingTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							// Change to a "Task Info" page instead of the current task edit functionality. Edit functionality is in the Context Action mode
 							Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
 							Task selectedTask = (Task)upcomingTasks.getItemAtPosition(position);
-	
-							Bundle taskInfo = new Bundle();
-							taskInfo.putString("code", "updatingTask");
-							taskInfo.putLong("taskId", selectedTask.id);
-							taskInfo.putString("taskText",selectedTask.taskText);
-							taskInfo.putString("date", selectedTask.dateTime.getTime().toString());
-							taskInfo.putString("reminder", selectedTask.reminder);
-							taskInfo.putString("proof", selectedTask.proof);
-							taskInfo.putInt("points", selectedTask.points);
-							taskInfo.putString("recurring", selectedTask.recurring);
-							taskInfo.putString("category", selectedTask.category);
-	
+
+							Bundle taskInfo = createTaskInfoBundle(selectedTask);
+							taskInfo.putString("code", "viewingTask");
 							addTaskIntent.putExtras(taskInfo);
-							startActivityForResult(addTaskIntent, REQUEST_CODE_ADDTASK);
+							startActivity(addTaskIntent);
 						}
 					});
-				} else { // No tasks in task list
+				} else { // No tasks in task list. *Not yet relevant without having a default "Add Task" ListView item*
 					upcomingTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 							Intent addTaskIntent = new Intent(rootView.getContext(), AddTaskActivity.class);
-							
+
 							Bundle taskInfo = new Bundle();
 							taskInfo.putString("code", "addingTask");
 							addTaskIntent.putExtras(taskInfo);
-							startActivityForResult(addTaskIntent, REQUEST_CODE_ADDTASK);
+							startActivity(addTaskIntent);
 						}
 					});
 				}
+			}
+		}
+		
+		private Bundle createTaskInfoBundle(Task task) {
+			Bundle taskInfo = new Bundle();
+			taskInfo.putLong("taskId", task.id);
+			taskInfo.putString("taskText", task.taskText);
+			taskInfo.putString("date", task.dateTime.getTime().toString());
+			taskInfo.putString("reminder", task.reminder);
+			taskInfo.putString("proof", task.proof);
+			taskInfo.putInt("points", task.points);
+			taskInfo.putString("recurring", task.recurring);
+			taskInfo.putString("category", task.category);
+			return taskInfo;
 		}
 	}
-}
-	
+
 	/**
 	 * A fragment representing the 'Info' tab.
 	 */
 	public static class ProductivityFragment extends Fragment {
-		
+
 		private View rootView;
-		
-//		private Typeface customFontLight;
-//		private Typeface customFontRegular;
+
+		//		private Typeface customFontLight;
+		//		private Typeface customFontRegular;
 		private Typeface customFontSemiBold;
-	
+
 		public ProductivityFragment() {
 		}
 
@@ -510,17 +548,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 					container, false);
 			return rootView;
 		}
-		
+
 		@Override
 		public void onActivityCreated(Bundle savedInstanceState) {
 			super.onActivityCreated(savedInstanceState);
-			
-//			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
-//	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
-	    	customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
-	    	
-	    	TextView titleTextView = (TextView)rootView.findViewById(R.id.infoTitleTextView); 
-	    	titleTextView.setTypeface(customFontSemiBold);
+
+			//			customFontLight = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_light));
+			//	    	customFontRegular = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_regular));
+			customFontSemiBold = Typeface.createFromAsset(getActivity().getAssets(), getString(R.string.custom_font_semibold));
+
+			TextView titleTextView = (TextView)rootView.findViewById(R.id.infoTitleTextView); 
+			titleTextView.setTypeface(customFontSemiBold);
 		}
 	}
 }
