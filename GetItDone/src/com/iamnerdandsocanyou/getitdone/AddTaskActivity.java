@@ -55,7 +55,8 @@ public class AddTaskActivity extends Activity {
 
 		// Show the Up button in the action bar.
 		setupActionBar();
-
+		
+		// Get references to all of the views and set the typefaces
 		final Typeface customFontLight = Typeface.createFromAsset(getAssets(), getString(R.string.custom_font_light));
 		final Typeface customFontRegular = Typeface.createFromAsset(getAssets(), getString(R.string.custom_font_regular));
 
@@ -96,16 +97,16 @@ public class AddTaskActivity extends Activity {
 		CustomSpinnerArrayAdapter categoryAdapter = new CustomSpinnerArrayAdapter(this, R.layout.spinner_item, getResources().getStringArray(R.array.category_choices));
 		categorySpinner.setAdapter(categoryAdapter);
 
-
+		// Get the code to see what action user is taking, ie, addingTask, updatingTask, viewingTask.
 		Bundle extras = getIntent().getExtras();
 		String code = extras.getString("code");
 
 		// If user is updating an already existing task fill in form with task data
-		if (!code.equals("addingTask")) {
+		if (code.equals("updatingTask")) {
 			updatingTask(extras);
 		}
 
-
+		// Set spinner selected item listeners for displaying appropriate "descriptions" based on selections
 		reminderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 				// An item was selected. You can retrieve the selected item using
@@ -282,7 +283,7 @@ public class AddTaskActivity extends Activity {
 			Task newTask = new Task(taskText, timeDate, reminder, proof, points, category, recurring, taskId);
 
 			// Sends task info to taskManager to be updated in database. 
-			// "addTask" returns true if successfully added, else false.
+			// "addTask" returns true if successfully added, else false. (currently always returns true)
 			Boolean taskAdded;
 			if (taskInfo.getString("code").equals("addingTask")) {
 				taskAdded = taskManager.addTask(newTask, getBaseContext());
@@ -324,6 +325,7 @@ public class AddTaskActivity extends Activity {
 		return timeDate;
 	}
 
+	// Populates all fields with appropriate task data using given Bundle (must contain all Task fields except 'id' and 'complete')
 	private void updatingTask(Bundle extras) {
 
 		// Disable datePicker

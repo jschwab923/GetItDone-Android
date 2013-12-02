@@ -276,7 +276,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		private TaskManager taskManager;
 
 		private Typeface customFontLight;
-		//		private Typeface customFontRegular;
+	//	private Typeface customFontRegular;
 		private Typeface customFontSemiBold;
 
 		public NowFragment() {
