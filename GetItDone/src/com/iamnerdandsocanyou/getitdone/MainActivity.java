@@ -375,6 +375,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 					case(R.id.edit_task_context_item):
 						int checkedCount = upcomingTasks.getCheckedItemCount();
 						if (checkedCount == 0) {
+							mode.finish();
 							break;
 						} else if (checkedCount == 1) {
 							Task selectedTask = (Task)upcomingTasks.getItemAtPosition(checkedItemPositions.get(0));
